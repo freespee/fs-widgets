@@ -10,5 +10,7 @@ const fuse = FuseBox.inti({
 
 fuse
   .bundle('index.js')
-  .instructions('> index.ts')
+  .instructions('[index.ts]')
   .watch();
+
+fuse.run();
