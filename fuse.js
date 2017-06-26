@@ -1,15 +1,16 @@
 const {FuseBox, TypeScriptHelpers} = require('fuse-box');
 
-const fuse = FuseBox.inti({
+const fuse = FuseBox.init({
   homeDir: './src/',
   output: './dist/',
+  tsConfig: './tsconfig.json',
   plugins: [
     TypeScriptHelpers(),
   ]
 });
 
 fuse
-  .bundle('index.js')
+  .bundle('dist/index.js')
   .instructions('[index.ts]')
   .watch();
 
