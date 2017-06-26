@@ -1,4 +1,8 @@
-const {FuseBox, TypeScriptHelpers} = require('fuse-box');
+const {FuseBox, TypeScriptHelpers, Sparky} = require('fuse-box');
+
+Sparky.task('default', () => {
+  return Sparky.watch('index.html', {base: './src/'}).dest('./dist/');
+});
 
 const fuse = FuseBox.init({
   homeDir: './src/',
