@@ -1,0 +1,24 @@
+{
+  "name": "fs-widgets",
+  "version": "1.0.0",
+  "description": "A angular libary for Freespee Widgets",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "angular",
+    "freespee",
+    "widgets"
+  ],
+  "author": "Chaaya, Elias & Rashidi, Damoon",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "^1.5.0",
+    "angular-chart.js": "1.1.1"
+  },
+  "devDependencies": {
+    "fuse-box": "^2.1.0",
+    "typescript": "^2.3.4"
+  }
+}
