@@ -15,15 +15,22 @@ ___scope___.file("services/FsData.service.js", function(exports, require, module
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var FsData = (function () {
-    function FsData() {
+    function FsData($http, $q) {
+        this.$http = $http;
+        this.$q = $q;
     }
     FsData.prototype.getDatasources = function () {
-        return [
+        var mock = [
             {
                 id: 1,
                 name: 'Lodis'
+            },
+            {
+                id: 2,
+                name: 'Janne'
             }
         ];
+        return this.$q.resolve(mock);
     };
     return FsData;
 }());
