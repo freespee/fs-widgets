@@ -5,41 +5,137 @@ ___scope___.file("index.js", function(exports, require, module, __filename, __di
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="../node_modules/@types/angular/index.d.ts" />
-var FsData_service_1 = require("./services/FsData.service");
+var line_chart_component_1 = require("./components/line-chart.component");
 angular
     .module('fs-widgets', [])
-    .service('FsData', FsData_service_1.FsData);
+    .component('lineChartWidget', line_chart_component_1.LineChartWidget);
 
 });
-___scope___.file("services/FsData.service.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("components/line-chart.component.js", function(exports, require, module, __filename, __dirname){
+var __decorate = __fsbx_decorate(arguments)
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = require("../decorators");
+require("./line-chart.styles.css");
+var LineChartWidget = (function () {
+    function LineChartWidget() {
+        this.title = 'hello from title before con';
+    }
+    LineChartWidget = __decorate([
+        decorators_1.Component({
+            template: "Hello World {{vm.title}}",
+            bindings: {
+                type: '<',
+                segments: '<',
+            },
+            controllerAs: 'vm',
+        })
+    ], LineChartWidget);
+    return LineChartWidget;
+}());
+exports.LineChartWidget = LineChartWidget;
+
+});
+___scope___.file("decorators.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var FsData = (function () {
-    function FsData($http, $q) {
-        this.$http = $http;
-        this.$q = $q;
-    }
-    FsData.prototype.getDatasources = function () {
-        console.log(this.subcustomerId);
-        var mock = [
-            {
-                id: 1,
-                name: 'Lodis'
-            },
-            {
-                id: 2,
-                name: 'Janne'
-            }
-        ];
-        return this.$q.resolve(mock);
+/// <reference path="../node_modules/@types/angular/index.d.ts" />
+exports.Component = function (options) {
+    return function (controller) {
+        return angular.extend(options, { controller: controller });
     };
-    return FsData;
-}());
-exports.FsData = FsData;
+};
 
 });
+___scope___.file("components/line-chart.styles.css", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("components/line-chart.styles.css", "line-chart-widget {\n  background: #fff;\n  display: flex;\n  justify-content: center;\n  align-items: flex-start;\n  width: 500px;\n  height: 500px;\n  box-shadow: 0 4px 6px rgba(0,0,0,.4);\n  border-radius: 2px;\n}")
 });
+});
+FuseBox.pkg("fuse-box-css", {}, function(___scope___){
+___scope___.file("index.js", function(exports, require, module, __filename, __dirname){
+
+/**
+ * Listens to 'async' requets and if the name is a css file
+ * wires it to `__fsbx_css`
+ */
+if (typeof FuseBox !== "undefined" && FuseBox.isBrowser) {
+    FuseBox.on('async', function(name) {
+        if (FuseBox.isServer) {
+            return;
+        }
+        if (/\.css$/.test(name)) {
+            __fsbx_css(name);
+            return false;
+        }
+    });
+}
+
+module.exports = function(__filename, contents) {
+    if (!FuseBox.isServer) {
+        var styleId = __filename.replace(/[\.\/]+/g, '-');
+        if (styleId.charAt(0) === '-') styleId = styleId.substring(1);
+        var exists = document.getElementById(styleId);
+        if (!exists) {
+            //<link href="//fonts.googleapis.com/css?family=Covered+By+Your+Grace" rel="stylesheet" type="text/css">
+            var s = document.createElement(contents ? 'style' : 'link');
+            s.id = styleId;
+            s.type = 'text/css';
+            if (contents) {
+                s.innerHTML = contents;
+            } else {
+                s.rel = 'stylesheet';
+                s.href = __filename;
+            }
+            document.getElementsByTagName('head')[0].appendChild(s);
+        } else {
+            if (contents) {
+                exists.innerHTML = contents;
+            }
+        }
+    }
+}
+});
+return ___scope___.entry = "index.js";
+});
+FuseBox.global("__fsbx_decorate", function(localArguments) {
+    return function(decorators, target, key, desc) {
+        var c = arguments.length,
+            r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+            d;
+
+        if (!decorators) {
+            return;
+        }
+        if (decorators && decorators.push) {
+            decorators.push(
+                __metadata("fusebox:exports", localArguments[0]),
+                __metadata("fusebox:require", localArguments[1]),
+                __metadata("fusebox:module", localArguments[2]),
+                __metadata("fusebox:__filename", localArguments[3]),
+                __metadata("fusebox:__dirname", localArguments[4])
+            );
+        }
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else
+            for (var i = decorators.length - 1; i >= 0; i--)
+                if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+});
+
+FuseBox.global("__metadata", function(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+});
+
 
 FuseBox.import("default/index.js");
 FuseBox.main("default/index.js");

@@ -1,8 +1,4 @@
-const {FuseBox, TypeScriptHelpers, Sparky} = require('fuse-box');
-
-Sparky.task('default', () => {
-  return Sparky.watch('index.html', {base: './src/'}).dest('./dist/');
-});
+const {FuseBox, TypeScriptHelpers, Sparky, CSSPlugin, SassPlugin} = require('fuse-box');
 
 const fuse = FuseBox.init({
   homeDir: './src/',
@@ -10,6 +6,7 @@ const fuse = FuseBox.init({
   tsConfig: './tsconfig.json',
   plugins: [
     TypeScriptHelpers(),
+    CSSPlugin(),
   ]
 });
 
@@ -24,3 +21,5 @@ fuse.dev({
 });
 
 fuse.run();
+
+Sparky.task('default', () => Sparky.watch('index.html', {base: './src/'}).dest('./dist/'));
