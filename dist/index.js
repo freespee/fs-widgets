@@ -4,6 +4,7 @@ ___scope___.file("index.js", function(exports, require, module, __filename, __di
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/// <reference path="../node_modules/@types/angular/index.d.ts" />
 var FsData_service_1 = require("./services/FsData.service");
 angular
     .module('fs-widgets', [])
@@ -20,6 +21,7 @@ var FsData = (function () {
         this.$q = $q;
     }
     FsData.prototype.getDatasources = function () {
+        console.log(this.subcustomerId);
         var mock = [
             {
                 id: 1,
