@@ -7,13 +7,23 @@ class FsData {
   subcustomerId: number;
   customerId: number;
 
-  getDatasources() : Datasource[] {
-    return [
+  constructor(private $http: ng.IHttpService, private $q: ng.IQService) {
+
+  }
+
+  getDatasources() : ng.IPromise<Datasource[]> {
+    const mock : Datasource[] = [
       {
         id: 1,
         name: 'Lodis'
+      },
+      {
+        id: 2,
+        name: 'Janne'
       }
     ];
+
+    return this.$q.resolve(mock);
   }
 
 }
