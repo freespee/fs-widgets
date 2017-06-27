@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
   <head>
     <title>My first angular production</title>
   </head>
-  <body>
+  <body ng-controller="MyCtrl">
+    <div ng-view></div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="index.js"></script>
     <script src="app.js"></script>

@@ -8,9 +8,10 @@ class FsData implements ng.IServiceProvider {
   _customerId: number;
   _baseUrl: string = 'https://analytics.freespee.com/be/';
 
-  constructor(private $http: ng.IHttpService, private $q: ng.IQService) {
-
-  }
+  constructor(
+    private $http: ng.IHttpService,
+    private $q: ng.IQService
+  ){}
 
   set subcustomerId(subcustomerId: number) {
       this._subcustomerId = subcustomerId;
@@ -36,7 +37,7 @@ class FsData implements ng.IServiceProvider {
   }
 
   getDatasources() : ng.IPromise<Datasource[]> {
-    const mock : Datasource[] = [
+    const mock: Datasource[] = [
       {
         id: 1,
         name: 'Lodis'
@@ -46,7 +47,6 @@ class FsData implements ng.IServiceProvider {
         name: 'Janne'
       }
     ];
-
     return this.$q.resolve(mock);
   }
 

@@ -15,7 +15,12 @@ const fuse = FuseBox.init({
 
 fuse
   .bundle('dist/index.js')
-  .instructions('[index.ts]')
+  .instructions('> index.ts')
   .watch();
+
+fuse.dev({
+  root: 'dist/',
+  port: '4444'
+});
 
 fuse.run();
