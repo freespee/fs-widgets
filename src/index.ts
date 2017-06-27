@@ -1,4 +1,4 @@
-import * as angular from 'angular';
+declare var angular: any;
 import { FsData } from "./services/FsData.service";
 
 angular
