@@ -4,5 +4,5 @@ import { FsData } from "./services/FsData.service";
 
 angular
   .module('fs-widgets', [])
-  .service('FsData', FsData);
+  .provider("FsData", [() => {return new FsData()}])
 
