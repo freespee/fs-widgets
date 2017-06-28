@@ -1,22 +1,25 @@
+import { IHttpPromiseCallbackArg } from "@types/angular";
+
 interface Datasource {
   id: number;
   name: string;
 }
 
 class FsData implements ng.IServiceProvider {
-  _subcustomerId: number;
   _customerId: number;
-  _baseUrl: string = 'https://analytics.freespee.com/be/';
+  _partnerId: number;
+  _baseUrl: string = 'https://analytics.freespee.com';
+  _datasources: Datasource[];
+  $http: ng.IHttpService;
+  $q: ng.IQService;
 
-  constructor(
-    private $http: ng.IHttpService,
-    private $q: ng.IQService
-  ){}
 
-  set subcustomerId(subcustomerId: number) {
-      this._subcustomerId = subcustomerId;
+  /* customer id */
+  set partnerId(partnerId: number) {
+      this._partnerId = partnerId;
   }
 
+  /* subcustomer id */
   set customerId(customerId: number) {
       this.customerId = customerId;
   }
@@ -25,29 +28,44 @@ class FsData implements ng.IServiceProvider {
       this.baseUrl = baseUrl;
   }
 
-  $get() {
+  $get($http: ng.IHttpService, $q: ng.IQService) {
+    this.$http = $http;
+    this.$q = $q;
+
     return {
-      logSubCust: this.logSubCust,
-      getDatasources: this.getDatasources
+      getDatasources: this.getDatasources.bind(this),
+      getData: this.getData.bind(this),
     }
   }
 
-  logSubCust(): void {
-    console.log('the subcust is now', this._subcustomerId);
+  getDatasources(): ng.IPromise<Datasource[]> {
+    let deferred = this.$q.defer();
+
+    if(this._datasources !== undefined) {
+      deferred.resolve(this._datasources);
+    } else {
+      this.$http
+        .get(`${this._baseUrl}/be/widgets/datasources?customer_id=${this._customerId}&partner_id=${this._partnerId}`)
+        .then((response: IHttpPromiseCallbackArg<Datasource[]>) => {
+          this._datasources = <Datasource[]>response.data;
+          deferred.resolve(this._datasources);
+        })
+        .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
+          deferred.reject(err.statusText || 'A error occured while fetching datasources');
+        });
+    }
+
+    return deferred.promise;
   }
 
-  getDatasources() : ng.IPromise<Datasource[]> {
-    const mock: Datasource[] = [
-      {
-        id: 1,
-        name: 'Lodis'
-      },
-      {
-        id: 2,
-        name: 'Janne'
-      }
-    ];
-    return this.$q.resolve(mock);
+  async getData(type: string, datasources: string[]): ng.IPromise<any> {
+    let sources = await this.getDatasources();
+    // sources.find((val) => {
+    //   return val.name.toLowerCase() === 
+    // });
+
+    return this.$q.resolve({ a: '1'});
+    
   }
 
 }
