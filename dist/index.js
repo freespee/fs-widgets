@@ -33,8 +33,9 @@ var LineChartWidget = (function () {
     LineChartWidget.prototype.$onInit = function () { };
     LineChartWidget = __decorate([
         decorators_1.Component({
-            template: "Hello World {{vm.type}}",
+            template: "\n    <h3\n      ng-bind=\"vm.title\"\n    ></h3>\n  ",
             bindings: {
+                title: '@',
                 type: '@',
                 segments: '<',
             },

@@ -2,8 +2,13 @@ import { Component } from '../decorators';
 import './line-chart.styles.css';
 
 @Component({
-  template: `Hello World {{vm.type}}`,
+  template: `
+    <h3
+      ng-bind="vm.title"
+    ></h3>
+  `,
   bindings: {
+    title: '@',
     type: '@',
     segments: '<',
   },
