@@ -8,4 +8,7 @@ import { FsData } from "./services/FsData.service";
 angular
   .module('fs-widgets', [])
   .provider("FsData", [() => {return new FsData()}])
+  .run(($http: ng.IHttpService) => {
+    $http.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+  })
   .component('lineChartWidget', LineChartWidget);

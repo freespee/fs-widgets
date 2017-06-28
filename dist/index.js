@@ -12,6 +12,9 @@ var FsData_service_1 = require("./services/FsData.service");
 angular
     .module('fs-widgets', [])
     .provider("FsData", [function () { return new FsData_service_1.FsData(); }])
+    .run(function ($http) {
+    $http.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+})
     .component('lineChartWidget', line_chart_component_1.LineChartWidget);
 
 });
@@ -108,7 +111,6 @@ var FsData = (function () {
         this._baseUrl = 'https://analytics.freespee.com';
     }
     Object.defineProperty(FsData.prototype, "partnerId", {
-        /* customer id */
         set: function (partnerId) {
             this._partnerId = partnerId;
         },
@@ -116,16 +118,15 @@ var FsData = (function () {
         configurable: true
     });
     Object.defineProperty(FsData.prototype, "customerId", {
-        /* subcustomer id */
         set: function (customerId) {
-            this.customerId = customerId;
+            this._customerId = customerId;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FsData.prototype, "baseUrl", {
         set: function (baseUrl) {
-            this.baseUrl = baseUrl;
+            this._baseUrl = baseUrl;
         },
         enumerable: true,
         configurable: true
@@ -157,21 +158,82 @@ var FsData = (function () {
         }
         return deferred.promise;
     };
-    FsData.prototype.getData = function (type, datasources) {
+    FsData.prototype.getData = function (dataset, datasources) {
         return __awaiter(this, void 0, void 0, function () {
-            var sources;
+            var _this = this;
+            var deferred, datasourceIds, nonMatchingDatasources, sources;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getDatasources()];
+                    case 0:
+                        debugger;
+                        deferred = this.$q.defer();
+                        datasourceIds = [];
+                        nonMatchingDatasources = [];
+                        return [4 /*yield*/, this.getDatasources()];
                     case 1:
                         sources = _a.sent();
-                        // sources.find((val) => {
-                        //   return val.name.toLowerCase() === 
-                        // });
-                        return [2 /*return*/, this.$q.resolve({ a: '1' })];
+                        datasources.forEach(function (ds) {
+                            debugger;
+                            var datasourceByName = sources.find(function (s) { return s.name.toLowerCase() === ds.toLowerCase(); });
+                            if (datasourceByName !== null) {
+                                datasourceIds.push(datasourceByName.id);
+                            }
+                            else {
+                                nonMatchingDatasources.push(ds);
+                            }
+                        });
+                        if (nonMatchingDatasources.length < 0) {
+                            throw new Error("Couldnt find a matching datasource for " + nonMatchingDatasources.join(','));
+                        }
+                        this.$http
+                            .get(this._baseUrl + "/be/widgets/datasources/data?customer_id=" + this._customerId + "&partner_id=" + this._partnerId + "&datasources=" + datasourceIds.join(','))
+                            .then(function (response) {
+                            var result = _this.transform(dataset, response.data, _this._datasources);
+                            deferred.resolve(result);
+                        })
+                            .catch(function (err) {
+                            deferred.reject(err.statusText || 'A error occured while fetching data');
+                        });
+                        return [2 /*return*/, deferred.promise];
                 }
             });
         });
+    };
+    FsData.prototype.transform = function (dataset, resp, datasources) {
+        // let data: any[] = [];
+        // let labels: string[] = [];
+        // let series: string[] = [];
+        // const chartMap = chartMappings[type];
+        // const xAxisColumn = chartMap.columns.find((m) => m.xAxis);
+        // resp.datasources.forEach((ds) => {
+        //   const uniqueLabels = ds.data.map(d => d[xAxisColumn.key]).filter((entry, index, arr) => {
+        //     return arr.indexOf(entry) !== index;
+        //   });
+        //   labels = uniqueLabels;
+        // });
+        // resp.datasources.forEach((ds, index, array) => {
+        //   let serie = <Datasource>datasources.find((systemSource) => systemSource.id === ds.datasource);
+        //   let serieSuffix: string = serie.name;
+        //   const objKeys = Object.keys(ds.data[0]);
+        //   series.push(...objKeys.filter(k => k !== xAxisColumn.name).map((k) => {
+        //       return `${k} (${serieSuffix})`;
+        //     })
+        //   );
+        //   debugger;
+        //   //answered (Google), answered (Bing)
+        //   ds.data.map((d) => {
+        //     chartMap.columns.forEach((col: any) => {
+        //       if(Object.hasOwnProperty(col.key) && col.xAxis === false) {
+        //         series.push( )
+        //       }
+        //     });
+        //   });
+        // });
+        // return {
+        //   labels,
+        //   data: [{}, {}],
+        //   series: [], //Answered (segment_name), Missed (segment_name)
+        // }
     };
     return FsData;
 }());
