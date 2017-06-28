@@ -210,8 +210,6 @@ var FsData = (function () {
                 return labels.indexOf(entry) === -1;
             });
             labels.push.apply(labels, dataLabels);
-        });
-        resp.datasources.forEach(function (ds, index, array) {
             var serie = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
             var objKeys = Object.keys(ds.data[0]);
             series.push.apply(series, objKeys.filter(function (key) { return key !== xAxisColumn.key; }).map(function (key) {
@@ -222,11 +220,17 @@ var FsData = (function () {
                 };
             }));
         });
-        // return {
-        //   labels,
-        //   data: [{}, {}],
-        //   series: [], //Answered (segment_name), Missed (segment_name)
-        // }
+        var outputSeries = [];
+        var outputData = [];
+        series.forEach(function (serie) {
+            outputSeries.push(serie.title);
+            outputData.push(serie.data);
+        });
+        return {
+            labels: labels,
+            data: outputData,
+            series: outputSeries
+        };
     };
     return FsData;
 }());

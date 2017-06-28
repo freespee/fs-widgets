@@ -111,7 +111,7 @@ class FsData implements ng.IServiceProvider {
     return deferred.promise;
   }
 
-  private transform(dataset: string, resp: FsDataResponse, datasources: Datasource[]): void {
+  private transform(dataset: string, resp: FsDataResponse, datasources: Datasource[]): any {
     let data: any[] = [];
     let labels: string[] = [];
     let series: any[] = [];
@@ -126,12 +126,8 @@ class FsData implements ng.IServiceProvider {
                           return labels.indexOf(entry) === -1;
                         });
       labels.push(...dataLabels);
-    });
-
-
-    resp.datasources.forEach((ds, index, array) => {
+      
       let serie = <Datasource>datasources.find((systemSource) => systemSource.id === ds.datasource);
-
       const objKeys = Object.keys(ds.data[0]);
       series.push(
         ...objKeys.filter(key => key !== xAxisColumn.key).map((key) => {
@@ -141,14 +137,21 @@ class FsData implements ng.IServiceProvider {
               data: ds.data.map((data) => data[key])
             } 
           })
-        );
+        );      
     });
+
+    let outputSeries: any[] = [];
+    let outputData: any[] = [];
+    series.forEach((serie) => {
+      outputSeries.push(serie.title);
+      outputData.push(serie.data);
+    })
     
-    // return {
-    //   labels,
-    //   data: [{}, {}],
-    //   series: [], //Answered (segment_name), Missed (segment_name)
-    // }
+    return {
+      labels,
+      data: outputData,
+      series: outputSeries
+    };
 
   }
 
