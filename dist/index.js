@@ -103,6 +103,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var chartMappings_1 = require("./../chartMappings");
 var FsData = (function () {
     function FsData() {
         this._baseUrl = 'https://analytics.freespee.com';
@@ -162,7 +163,6 @@ var FsData = (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        debugger;
                         deferred = this.$q.defer();
                         datasourceIds = [];
                         nonMatchingDatasources = [];
@@ -170,9 +170,8 @@ var FsData = (function () {
                     case 1:
                         sources = _a.sent();
                         datasources.forEach(function (ds) {
-                            debugger;
                             var datasourceByName = sources.find(function (s) { return s.name.toLowerCase() === ds.toLowerCase(); });
-                            if (datasourceByName !== null) {
+                            if (datasourceByName !== undefined) {
                                 datasourceIds.push(datasourceByName.id);
                             }
                             else {
@@ -183,9 +182,10 @@ var FsData = (function () {
                             throw new Error("Couldnt find a matching datasource for " + nonMatchingDatasources.join(','));
                         }
                         this.$http
-                            .get(this._baseUrl + "/be/widgets/datasources/data?customer_id=" + this._customerId + "&partner_id=" + this._partnerId + "&datasources=" + datasourceIds.join(','))
+                            .get(this._baseUrl + "/be/widgets/datasources/data?widget_name=" + dataset + "&customer_id=" + this._customerId + "&partner_id=" + this._partnerId + "&datasources=" + datasourceIds.join(','))
                             .then(function (response) {
-                            var result = _this.transform(dataset, response.data, _this._datasources);
+                            var resp = Array.isArray(response.data) ? response.data[0] : response.data;
+                            var result = _this.transform(dataset, resp, _this._datasources);
                             deferred.resolve(result);
                         })
                             .catch(function (err) {
@@ -197,35 +197,31 @@ var FsData = (function () {
         });
     };
     FsData.prototype.transform = function (dataset, resp, datasources) {
-        // let data: any[] = [];
-        // let labels: string[] = [];
-        // let series: string[] = [];
-        // const chartMap = chartMappings[type];
-        // const xAxisColumn = chartMap.columns.find((m) => m.xAxis);
-        // resp.datasources.forEach((ds) => {
-        //   const uniqueLabels = ds.data.map(d => d[xAxisColumn.key]).filter((entry, index, arr) => {
-        //     return arr.indexOf(entry) !== index;
-        //   });
-        //   labels = uniqueLabels;
-        // });
-        // resp.datasources.forEach((ds, index, array) => {
-        //   let serie = <Datasource>datasources.find((systemSource) => systemSource.id === ds.datasource);
-        //   let serieSuffix: string = serie.name;
-        //   const objKeys = Object.keys(ds.data[0]);
-        //   series.push(...objKeys.filter(k => k !== xAxisColumn.name).map((k) => {
-        //       return `${k} (${serieSuffix})`;
-        //     })
-        //   );
-        //   debugger;
-        //   //answered (Google), answered (Bing)
-        //   ds.data.map((d) => {
-        //     chartMap.columns.forEach((col: any) => {
-        //       if(Object.hasOwnProperty(col.key) && col.xAxis === false) {
-        //         series.push( )
-        //       }
-        //     });
-        //   });
-        // });
+        var data = [];
+        var labels = [];
+        var series = [];
+        var chartMap = chartMappings_1.chartMappings[dataset];
+        var xAxisColumn = chartMap.columns.find(function (m) { return m.xAxis; });
+        var tempLabels = [];
+        resp.datasources.forEach(function (ds) {
+            var dataLabels = ds.data
+                .map(function (d) { return d[xAxisColumn.key]; })
+                .filter(function (entry, index, arr) {
+                return labels.indexOf(entry) === -1;
+            });
+            labels.push.apply(labels, dataLabels);
+        });
+        resp.datasources.forEach(function (ds, index, array) {
+            var serie = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
+            var objKeys = Object.keys(ds.data[0]);
+            series.push.apply(series, objKeys.filter(function (key) { return key !== xAxisColumn.key; }).map(function (key) {
+                return {
+                    title: key + " (" + serie.name + ")",
+                    datasource: serie,
+                    data: ds.data.map(function (data) { return data[key]; })
+                };
+            }));
+        });
         // return {
         //   labels,
         //   data: [{}, {}],
@@ -235,6 +231,30 @@ var FsData = (function () {
     return FsData;
 }());
 exports.FsData = FsData;
+
+});
+___scope___.file("chartMappings.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.chartMappings = {
+    calls_per_day: {
+        columns: [
+            {
+                key: 'day',
+                xAxis: true
+            },
+            {
+                key: 'answered',
+                xAxis: false
+            },
+            {
+                key: 'missed',
+                xAxis: false
+            }
+        ]
+    }
+};
 
 });
 });

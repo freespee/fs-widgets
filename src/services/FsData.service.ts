@@ -76,16 +76,15 @@ class FsData implements ng.IServiceProvider {
   }
 
   async getData(dataset: string, datasources: string[]): Promise<any> {
-    debugger;
+
     let deferred = this.$q.defer();
     let datasourceIds: number[] = [];
     let nonMatchingDatasources: string[] = [];
 
     let sources = await this.getDatasources(); 
     datasources.forEach((ds) => {
-      debugger;
       let datasourceByName: Datasource  = <Datasource>sources.find(s => s.name.toLowerCase() === ds.toLowerCase());
-      if(datasourceByName !== null) {
+      if(datasourceByName !== undefined) {
         datasourceIds.push(datasourceByName.id);
       } else {
         nonMatchingDatasources.push(ds);
@@ -98,9 +97,11 @@ class FsData implements ng.IServiceProvider {
     }
 
     this.$http
-      .get(`${this._baseUrl}/be/widgets/datasources/data?customer_id=${this._customerId}&partner_id=${this._partnerId}&datasources=${datasourceIds.join(',')}`)
+      .get(`${this._baseUrl}/be/widgets/datasources/data?widget_name=${dataset}&customer_id=${this._customerId}&partner_id=${this._partnerId}&datasources=${datasourceIds.join(',')}`)
       .then((response: IHttpPromiseCallbackArg<FsDataResponse>) => {
-        let result = this.transform(dataset, <FsDataResponse>response.data, this._datasources);
+
+        let resp = Array.isArray(response.data) ? response.data[0] : response.data; 
+        let result = this.transform(dataset, <FsDataResponse>resp, this._datasources);
         deferred.resolve(result);
       })
       .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
@@ -111,43 +112,37 @@ class FsData implements ng.IServiceProvider {
   }
 
   private transform(dataset: string, resp: FsDataResponse, datasources: Datasource[]): void {
-    // let data: any[] = [];
-    // let labels: string[] = [];
-    // let series: string[] = [];
-    // const chartMap = chartMappings[type];
-    // const xAxisColumn = chartMap.columns.find((m) => m.xAxis);
+    let data: any[] = [];
+    let labels: string[] = [];
+    let series: any[] = [];
+    const chartMap = chartMappings[dataset];
+    const xAxisColumn = chartMap.columns.find((m) => m.xAxis);
 
-    // resp.datasources.forEach((ds) => {
-    //   const uniqueLabels = ds.data.map(d => d[xAxisColumn.key]).filter((entry, index, arr) => {
-    //     return arr.indexOf(entry) !== index;
-    //   });
-    //   labels = uniqueLabels;
-    // });
+    const tempLabels: any[] = [];
+    resp.datasources.forEach((ds) => {
+      let dataLabels = ds.data
+                        .map(d => d[xAxisColumn.key])
+                        .filter((entry, index, arr) => {
+                          return labels.indexOf(entry) === -1;
+                        });
+      labels.push(...dataLabels);
+    });
 
 
-    // resp.datasources.forEach((ds, index, array) => {
-    //   let serie = <Datasource>datasources.find((systemSource) => systemSource.id === ds.datasource);
-    //   let serieSuffix: string = serie.name;
+    resp.datasources.forEach((ds, index, array) => {
+      let serie = <Datasource>datasources.find((systemSource) => systemSource.id === ds.datasource);
 
-    //   const objKeys = Object.keys(ds.data[0]);
-    //   series.push(...objKeys.filter(k => k !== xAxisColumn.name).map((k) => {
-    //       return `${k} (${serieSuffix})`;
-    //     })
-    //   );
-
-    //   debugger;
-
-    //   //answered (Google), answered (Bing)
-      
-
-    //   ds.data.map((d) => {
-    //     chartMap.columns.forEach((col: any) => {
-    //       if(Object.hasOwnProperty(col.key) && col.xAxis === false) {
-    //         series.push( )
-    //       }
-    //     });
-    //   });
-    // });
+      const objKeys = Object.keys(ds.data[0]);
+      series.push(
+        ...objKeys.filter(key => key !== xAxisColumn.key).map((key) => {
+            return {
+              title: `${key} (${serie.name})`,
+              datasource: serie,
+              data: ds.data.map((data) => data[key])
+            } 
+          })
+        );
+    });
     
     // return {
     //   labels,

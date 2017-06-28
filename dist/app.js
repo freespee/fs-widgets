@@ -11,10 +11,10 @@ app.controller('MyCtrl', MyCtrl);
 
 MyCtrl.$inject = ['$scope', 'FsData'];
 function MyCtrl($scope, FsData) {
-  FsData.getData('calls_per_day', [0])
+  FsData.getData('calls_per_day', ["Everything"])
     .then(function(data) {
-      debugger;
+      console.log('fetchec data', data);
     }).catch(function(error) {
-      debugger;
+      console.error(error);
     });
 }
