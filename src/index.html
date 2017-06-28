@@ -9,13 +9,20 @@
         box-sizing: border-box;
       }
       body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background: #efefef;
+        height: 100vh;
       }
     </style>
   </head>
   <body ng-controller="MyCtrl">
     <div>
-      <line-chart-widget></line-chart-widget>
+      <line-chart-widget
+        type="calls_per_day"
+        segments="[0]"
+      ></line-chart-widget>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="index.js"></script>

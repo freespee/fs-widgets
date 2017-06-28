@@ -2,19 +2,20 @@ import { Component } from '../decorators';
 import './line-chart.styles.css';
 
 @Component({
-  template: `Hello World {{vm.title}}`,
+  template: `Hello World {{vm.type}}`,
   bindings: {
-    type: '<',
+    type: '@',
     segments: '<',
   },
   controllerAs: 'vm',
 })
 export class LineChartWidget {
   
-  private title: string = 'hello from title before con';
+  private type: string;
+  private segments: any[];
 
-  constructor () {
+  constructor () { }
 
-  }
+  $onInit() { }
 
 }
