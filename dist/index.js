@@ -10,6 +10,9 @@ var FsData_service_1 = require("./services/FsData.service");
 angular
     .module('fs-widgets', [])
     .provider("FsData", [function () { return new FsData_service_1.FsData(); }])
+    .run(function ($http) {
+    $http.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+})
     .component('lineChartWidget', line_chart_component_1.LineChartWidget);
 
 });
@@ -56,6 +59,230 @@ exports.Component = function (options) {
 };
 
 });
+___scope___.file("components/line-chart.styles.css", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("components/line-chart.styles.css", "line-chart-widget {\n  background: #fff;\n  display: flex;\n  justify-content: center;\n  align-items: flex-start;\n  width: 500px;\n  height: 500px;\n  box-shadow: 0 4px 6px rgba(0,0,0,.4);\n  border-radius: 2px;\n}")
+});
+___scope___.file("services/FsData.service.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var FsData = (function () {
+    function FsData() {
+        this._baseUrl = 'https://analytics.freespee.com';
+    }
+    Object.defineProperty(FsData.prototype, "partnerId", {
+        set: function (partnerId) {
+            this._partnerId = partnerId;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FsData.prototype, "customerId", {
+        set: function (customerId) {
+            this._customerId = customerId;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FsData.prototype, "baseUrl", {
+        set: function (baseUrl) {
+            this._baseUrl = baseUrl;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    FsData.prototype.$get = function ($http, $q) {
+        this.$http = $http;
+        this.$q = $q;
+        return {
+            getDatasources: this.getDatasources.bind(this),
+            getData: this.getData.bind(this),
+        };
+    };
+    FsData.prototype.getDatasources = function () {
+        var _this = this;
+        var deferred = this.$q.defer();
+        if (this._datasources !== undefined) {
+            deferred.resolve(this._datasources);
+        }
+        else {
+            this.$http
+                .get(this._baseUrl + "/be/widgets/datasources?customer_id=" + this._customerId + "&partner_id=" + this._partnerId)
+                .then(function (response) {
+                _this._datasources = response.data;
+                deferred.resolve(_this._datasources);
+            })
+                .catch(function (err) {
+                deferred.reject(err.statusText || 'A error occured while fetching datasources');
+            });
+        }
+        return deferred.promise;
+    };
+    FsData.prototype.getData = function (dataset, datasources) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            var deferred, datasourceIds, nonMatchingDatasources, sources;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        debugger;
+                        deferred = this.$q.defer();
+                        datasourceIds = [];
+                        nonMatchingDatasources = [];
+                        return [4 /*yield*/, this.getDatasources()];
+                    case 1:
+                        sources = _a.sent();
+                        datasources.forEach(function (ds) {
+                            debugger;
+                            var datasourceByName = sources.find(function (s) { return s.name.toLowerCase() === ds.toLowerCase(); });
+                            if (datasourceByName !== null) {
+                                datasourceIds.push(datasourceByName.id);
+                            }
+                            else {
+                                nonMatchingDatasources.push(ds);
+                            }
+                        });
+                        if (nonMatchingDatasources.length < 0) {
+                            throw new Error("Couldnt find a matching datasource for " + nonMatchingDatasources.join(','));
+                        }
+                        this.$http
+                            .get(this._baseUrl + "/be/widgets/datasources/data?customer_id=" + this._customerId + "&partner_id=" + this._partnerId + "&datasources=" + datasourceIds.join(','))
+                            .then(function (response) {
+                            var result = _this.transform(dataset, response.data, _this._datasources);
+                            deferred.resolve(result);
+                        })
+                            .catch(function (err) {
+                            deferred.reject(err.statusText || 'A error occured while fetching data');
+                        });
+                        return [2 /*return*/, deferred.promise];
+                }
+            });
+        });
+    };
+    FsData.prototype.transform = function (dataset, resp, datasources) {
+        // let data: any[] = [];
+        // let labels: string[] = [];
+        // let series: string[] = [];
+        // const chartMap = chartMappings[type];
+        // const xAxisColumn = chartMap.columns.find((m) => m.xAxis);
+        // resp.datasources.forEach((ds) => {
+        //   const uniqueLabels = ds.data.map(d => d[xAxisColumn.key]).filter((entry, index, arr) => {
+        //     return arr.indexOf(entry) !== index;
+        //   });
+        //   labels = uniqueLabels;
+        // });
+        // resp.datasources.forEach((ds, index, array) => {
+        //   let serie = <Datasource>datasources.find((systemSource) => systemSource.id === ds.datasource);
+        //   let serieSuffix: string = serie.name;
+        //   const objKeys = Object.keys(ds.data[0]);
+        //   series.push(...objKeys.filter(k => k !== xAxisColumn.name).map((k) => {
+        //       return `${k} (${serieSuffix})`;
+        //     })
+        //   );
+        //   debugger;
+        //   //answered (Google), answered (Bing)
+        //   ds.data.map((d) => {
+        //     chartMap.columns.forEach((col: any) => {
+        //       if(Object.hasOwnProperty(col.key) && col.xAxis === false) {
+        //         series.push( )
+        //       }
+        //     });
+        //   });
+        // });
+        // return {
+        //   labels,
+        //   data: [{}, {}],
+        //   series: [], //Answered (segment_name), Missed (segment_name)
+        // }
+    };
+    return FsData;
+}());
+exports.FsData = FsData;
+
+});
+});
+FuseBox.pkg("fuse-box-css", {}, function(___scope___){
+___scope___.file("index.js", function(exports, require, module, __filename, __dirname){
+
+/**
+ * Listens to 'async' requets and if the name is a css file
+ * wires it to `__fsbx_css`
+ */
+if (typeof FuseBox !== "undefined" && FuseBox.isBrowser) {
+    FuseBox.on('async', function(name) {
+        if (FuseBox.isServer) {
+            return;
+        }
+        if (/\.css$/.test(name)) {
+            __fsbx_css(name);
+            return false;
+        }
+    });
+}
+
+module.exports = function(__filename, contents) {
+    if (!FuseBox.isServer) {
+        var styleId = __filename.replace(/[\.\/]+/g, '-');
+        if (styleId.charAt(0) === '-') styleId = styleId.substring(1);
+        var exists = document.getElementById(styleId);
+        if (!exists) {
+            //<link href="//fonts.googleapis.com/css?family=Covered+By+Your+Grace" rel="stylesheet" type="text/css">
+            var s = document.createElement(contents ? 'style' : 'link');
+            s.id = styleId;
+            s.type = 'text/css';
+            if (contents) {
+                s.innerHTML = contents;
+            } else {
+                s.rel = 'stylesheet';
+                s.href = __filename;
+            }
+            document.getElementsByTagName('head')[0].appendChild(s);
+        } else {
+            if (contents) {
+                exists.innerHTML = contents;
+            }
+        }
+    }
+}
+});
+return ___scope___.entry = "index.js";
 });
 FuseBox.global("__fsbx_decorate", function(localArguments) {
     return function(decorators, target, key, desc) {
@@ -85,6 +312,73 @@ FuseBox.global("__fsbx_decorate", function(localArguments) {
 
 FuseBox.global("__metadata", function(k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+});
+
+FuseBox.global("__awaiter", function(thisArg, _arguments, P, generator) {
+    return new(P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+
+        function step(result) { result.done ? resolve(result.value) : new P(function(resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+});
+
+FuseBox.global("__generator", function(thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] },
+        f, y, t;
+    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+
+    function verb(n) { return function(v) { return step([n, v]); }; }
+
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return { value: op[1], done: false };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [0];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [6, e];
+            y = 0;
+        } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1];
+        return { value: op[0] ? op[1] : void 0, done: true };
+    }
 });
 
 

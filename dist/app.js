@@ -1,15 +1,20 @@
 let app = angular.module('app', ['fs-widgets']);
 
 app.config((FsDataProvider) => {
-  FsDataProvider.customerId = 3;
-  FsDataProvider.subcustomerId = 432657;
-  FsDataProvider.baseUrl = 'http://staging.freespee.com/'
+  debugger;
+  FsDataProvider.customerId = 432657;
+  FsDataProvider.partnerId = 3;
+  FsDataProvider.baseUrl = 'http://analytics.dev';
 });
 
 app.controller('MyCtrl', MyCtrl);
 
 MyCtrl.$inject = ['$scope', 'FsData'];
 function MyCtrl($scope, FsData) {
-  let data = FsData.logSubCust();
-  console.log(data);
+  FsData.getData('calls_per_day', [0])
+    .then(function(data) {
+      debugger;
+    }).catch(function(error) {
+      debugger;
+    });
 }
