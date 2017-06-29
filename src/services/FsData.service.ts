@@ -75,7 +75,7 @@ class FsData implements ng.IServiceProvider {
     return deferred.promise;
   }
 
-  async getData(dataset: string, datasources: string[]): Promise<any> {
+  async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = ''): Promise<any> {
 
     let deferred = this.$q.defer();
     let datasourceIds: number[] = [];
@@ -93,11 +93,18 @@ class FsData implements ng.IServiceProvider {
     
 
     if(nonMatchingDatasources.length < 0) {
-      throw new Error(`Couldnt find a matching datasource for ${nonMatchingDatasources.join(',')}`);
+      throw new Error(`Couldnt lookup existing datasource id(s) for ${nonMatchingDatasources.join(',')}`);
     }
 
+    let requestUrl = `${this._baseUrl}/be/widgets/datasources/data?
+                        widget_name=${dataset}&
+                        customer_id=${this._customerId}&
+                        partner_id=${this._partnerId}&
+                        datasources=${datasourceIds.join(',')}
+                        from_date=${fromDate}
+                        to_date=${toDate}`;
     this.$http
-      .get(`${this._baseUrl}/be/widgets/datasources/data?widget_name=${dataset}&customer_id=${this._customerId}&partner_id=${this._partnerId}&datasources=${datasourceIds.join(',')}`)
+      .get(requestUrl)
       .then((response: IHttpPromiseCallbackArg<FsDataResponse>) => {
 
         let resp = Array.isArray(response.data) ? response.data[0] : response.data; 
@@ -117,7 +124,7 @@ class FsData implements ng.IServiceProvider {
     let series: any[] = [];
     const chartMap = chartMappings[dataset];
     const xAxisColumn = chartMap.columns.find(m => m.xAxis);
-    const tempLabels: any[] = [];
+
     resp.datasources.forEach( ds => {
       let dataLabels = ds.data
                         .sort((a, b) => a.day < b.day ? -1 : 1)
