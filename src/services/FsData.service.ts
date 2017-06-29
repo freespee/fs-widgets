@@ -16,6 +16,11 @@ interface FsDataResponse {
   datasources: FsDataResponseDatasource[];
 }
 
+interface FsSeriesTranslation {
+  serieName: string;
+  translation: string;
+}
+
 export interface ChartResponse {
   labels: string[];
   series: string[];
@@ -75,7 +80,7 @@ class FsData implements ng.IServiceProvider {
     return deferred.promise;
   }
 
-  async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = ''): Promise<any> {
+  async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = '', translations: FsSeriesTranslation[]): Promise<any> {
     
     let deferred = this.$q.defer();
     let datasourceIds: number[] = [];
@@ -106,7 +111,7 @@ class FsData implements ng.IServiceProvider {
       .then((response: IHttpPromiseCallbackArg<FsDataResponse>) => {
 
         let resp = Array.isArray(response.data) ? response.data[0] : response.data; 
-        let result = this.transform(dataset, <FsDataResponse>resp, this._datasources);
+        let result = this.transform(dataset, <FsDataResponse>resp, this._datasources, translations);
         deferred.resolve(result);
       })
       .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
@@ -116,7 +121,7 @@ class FsData implements ng.IServiceProvider {
     return deferred.promise;
   }
 
-  private transform(dataset: string, resp: FsDataResponse, datasources: Datasource[]): any {
+  private transform(dataset: string, resp: FsDataResponse, datasources: Datasource[], translations: FsSeriesTranslation[] = []): any {
     let data: any[] = [];
     let labels: string[] = [];
     let series: any[] = [];
@@ -133,15 +138,19 @@ class FsData implements ng.IServiceProvider {
                         .filter((entry, index, arr) => labels.indexOf(entry) === -1);
       labels.push(...dataLabels);
       
-      let serie = <Datasource>datasources.find(systemSource => systemSource.id === ds.datasource);
+      let datasource = <Datasource>datasources.find(systemSource => systemSource.id === ds.datasource);
       const objKeys = Object.keys(ds.data[0]);
       series.push(
-        ...objKeys.filter(key => key !== xAxisColumn.key).map(key => ({
-              title: serie.id === 0 ? `${key}` : `${key} (${serie.name})`,
-              datasource: serie,
-              data: ds.data.map((data) => data[key])
+        ...objKeys.filter(key => key !== xAxisColumn.key).map((key) => {
+              let overrideSerieName = translations.find(tran => tran.serieName === key);
+              let serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
+              return {
+                title: datasource.id === 0 ? `${serieName}` : `${serieName} (${datasource.name})`,
+                datasource: datasource,
+                data: ds.data.map((data) => data[key])
+              }
+             
             })
-          )
         );
     });
 

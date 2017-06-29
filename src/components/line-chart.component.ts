@@ -35,7 +35,7 @@ export class LineChartWidget {
   constructor (private $scope, private FsData: FsData) { }
 
   async $onInit() {
-    this.data = await this.FsData.getData(this.type, this.segments);
+    this.data = await this.FsData.getData(this.type, this.segments, '', '', []);
     this.$scope.$apply();
   }
 
