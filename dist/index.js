@@ -267,6 +267,9 @@ var FsData = (function () {
         var labels = [];
         var series = [];
         var chartMap = chartMappings_1.chartMappings[dataset];
+        if (chartMap === undefined) {
+            throw new Error("Chartmapping missing for " + dataset);
+        }
         var xAxisColumn = chartMap.columns.find(function (m) { return m.xAxis; });
         resp.datasources.forEach(function (ds) {
             var dataLabels = ds.data

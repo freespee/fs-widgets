@@ -121,6 +121,9 @@ class FsData implements ng.IServiceProvider {
     let labels: string[] = [];
     let series: any[] = [];
     const chartMap = chartMappings[dataset];
+    if(chartMap === undefined) {
+      throw new Error(`Chartmapping missing for ${dataset}`);
+    }
     const xAxisColumn = chartMap.columns.find(m => m.xAxis);
 
     resp.datasources.forEach( ds => {
