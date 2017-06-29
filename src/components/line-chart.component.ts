@@ -1,3 +1,4 @@
+/// <reference path="../../node_modules/@types/angular/index.d.ts" />
 import { Component } from '../decorators';
 import { FsData, ChartResponse } from '../services/FsData.service';
 import './line-chart.styles.css';
