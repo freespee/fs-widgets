@@ -26,7 +26,7 @@ import './line-chart.styles.css';
 export class LineChartWidget {
   
   private type: string;
-  private segments: any[];
+  private segments: string[] = ['all_data'];
   private data: ChartResponse = {
     data: [],
     labels: [],

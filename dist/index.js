@@ -70,6 +70,7 @@ var LineChartWidget = (function () {
     function LineChartWidget($scope, FsData) {
         this.$scope = $scope;
         this.FsData = FsData;
+        this.segments = ['all_data'];
         this.data = {
             data: [],
             labels: [],
