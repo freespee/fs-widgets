@@ -244,7 +244,7 @@ var FsData = (function () {
                         if (nonMatchingDatasources.length < 0) {
                             throw new Error("Couldnt lookup existing datasource id(s) for " + nonMatchingDatasources.join(','));
                         }
-                        requestUrl = this._baseUrl + "/be/widgets/datasources/data?\n                        widget_name=" + dataset + "&\n                        customer_id=" + this._customerId + "&\n                        partner_id=" + this._partnerId + "&\n                        datasources=" + datasourceIds.join(',') + "\n                        from_date=" + fromDate + "\n                        to_date=" + toDate;
+                        requestUrl = this._baseUrl + "/be/widgets/datasources/data?widget_name=" + dataset + "&customer_id=" + this._customerId + "&partner_id=" + this._partnerId + "&datasources=" + datasourceIds.join(',') + "&from_date=" + fromDate + "&to_date=" + toDate;
                         this.$http
                             .get(requestUrl)
                             .then(function (response) {
