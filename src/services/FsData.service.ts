@@ -137,7 +137,7 @@ class FsData implements ng.IServiceProvider {
       const objKeys = Object.keys(ds.data[0]);
       series.push(
         ...objKeys.filter(key => key !== xAxisColumn.key).map(key => ({
-              title: `${key} (${serie.name})`,
+              title: serie.id === 0 ? `${key}` : `${key} (${serie.name})`,
               datasource: serie,
               data: ds.data.map((data) => data[key])
             })
