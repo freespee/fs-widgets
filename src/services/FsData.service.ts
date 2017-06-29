@@ -76,7 +76,7 @@ class FsData implements ng.IServiceProvider {
   }
 
   async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = ''): Promise<any> {
-
+    
     let deferred = this.$q.defer();
     let datasourceIds: number[] = [];
     let nonMatchingDatasources: string[] = [];
@@ -95,14 +95,8 @@ class FsData implements ng.IServiceProvider {
     if(nonMatchingDatasources.length < 0) {
       throw new Error(`Couldnt lookup existing datasource id(s) for ${nonMatchingDatasources.join(',')}`);
     }
-
-    let requestUrl = `${this._baseUrl}/be/widgets/datasources/data?
-                        widget_name=${dataset}&
-                        customer_id=${this._customerId}&
-                        partner_id=${this._partnerId}&
-                        datasources=${datasourceIds.join(',')}
-                        from_date=${fromDate}
-                        to_date=${toDate}`;
+    
+    let requestUrl = `${this._baseUrl}/be/widgets/datasources/data?widget_name=${dataset}&customer_id=${this._customerId}&partner_id=${this._partnerId}&datasources=${datasourceIds.join(',')}&from_date=${fromDate}&to_date=${toDate}`;
     this.$http
       .get(requestUrl)
       .then((response: IHttpPromiseCallbackArg<FsDataResponse>) => {
