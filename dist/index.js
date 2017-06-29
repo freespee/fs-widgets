@@ -280,7 +280,7 @@ var FsData = (function () {
             var serie = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
             var objKeys = Object.keys(ds.data[0]);
             series.push.apply(series, objKeys.filter(function (key) { return key !== xAxisColumn.key; }).map(function (key) { return ({
-                title: key + " (" + serie.name + ")",
+                title: serie.id === 0 ? "" + key : key + " (" + serie.name + ")",
                 datasource: serie,
                 data: ds.data.map(function (data) { return data[key]; })
             }); }));
