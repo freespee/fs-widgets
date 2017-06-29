@@ -92,8 +92,12 @@ class FsData implements ng.IServiceProvider {
     })
     
 
-    if(nonMatchingDatasources.length < 0) {
-      throw new Error(`Couldnt lookup existing datasource id(s) for ${nonMatchingDatasources.join(',')}`);
+    if(nonMatchingDatasources.length > 0) {
+      console.warn(`Couldnt lookup existing datasource id(s) for ${nonMatchingDatasources.join(',')}.`);
+    }
+
+    if(datasourceIds.length === 0) {
+      datasourceIds.push(0);
     }
     
     let requestUrl = `${this._baseUrl}/be/widgets/datasources/data?widget_name=${dataset}&customer_id=${this._customerId}&partner_id=${this._partnerId}&datasources=${datasourceIds.join(',')}&from_date=${fromDate}&to_date=${toDate}`;
@@ -117,6 +121,9 @@ class FsData implements ng.IServiceProvider {
     let labels: string[] = [];
     let series: any[] = [];
     const chartMap = chartMappings[dataset];
+    if(chartMap === undefined) {
+      throw new Error(`Chartmapping missing for ${dataset}`);
+    }
     const xAxisColumn = chartMap.columns.find(m => m.xAxis);
 
     resp.datasources.forEach( ds => {
