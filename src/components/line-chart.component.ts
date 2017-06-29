@@ -1,4 +1,5 @@
 import { Component } from '../decorators';
+import { FsData, ChartResponse } from '../services/FsData.service';
 import './line-chart.styles.css';
 
 @Component({
@@ -6,6 +7,13 @@ import './line-chart.styles.css';
     <h3
       ng-bind="vm.title"
     ></h3>
+    <canvas
+      id="line"
+      chart-data="vm.data.data"
+      chart-labels="vm.data.labels"
+      chart-series="vm.data.series"
+      class="chart chart-line"
+    ></canvas>
   `,
   bindings: {
     title: '@',
@@ -18,9 +26,17 @@ export class LineChartWidget {
   
   private type: string;
   private segments: any[];
+  private data: ChartResponse = {
+    data: [],
+    labels: [],
+    series: []
+  }
 
-  constructor () { }
+  constructor (private $scope, private FsData: FsData) { }
 
-  $onInit() { }
+  async $onInit() {
+    this.data = await this.FsData.getData(this.type, this.segments);
+    this.$scope.$apply();
+  }
 
 }

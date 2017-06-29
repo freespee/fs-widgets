@@ -1,10 +1,15 @@
 line-chart-widget {
   background: #fff;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  justify-content: flex-start;
+  align-items: center;
   width: 500px;
-  height: 500px;
   box-shadow: 0 4px 6px rgba(0,0,0,.4);
   border-radius: 2px;
+  flex-direction: column;
+  padding: 20px;
+}
+
+line-chart-widget canvas {
+  width: 100%;
 }

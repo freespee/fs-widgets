@@ -16,10 +16,10 @@ interface FsDataResponse {
   datasources: FsDataResponseDatasource[];
 }
 
-interface ChartResponse {
+export interface ChartResponse {
   labels: string[];
   series: string[];
-  data: [any];
+  data: any[];
 }
 
 
@@ -83,7 +83,7 @@ class FsData implements ng.IServiceProvider {
 
     let sources = await this.getDatasources(); 
     datasources.forEach((ds) => {
-      let datasourceByName: Datasource  = <Datasource>sources.find(s => s.name.toLowerCase() === ds.toLowerCase());
+      let datasourceByName: Datasource  = <Datasource>sources.find(s => s.name.toLowerCase() === (""+ds).toLowerCase());
       if(datasourceByName !== undefined) {
         datasourceIds.push(datasourceByName.id);
       } else {
@@ -111,46 +111,44 @@ class FsData implements ng.IServiceProvider {
     return deferred.promise;
   }
 
-  private transform(dataset: string, resp: FsDataResponse, datasources: Datasource[]): void {
+  private transform(dataset: string, resp: FsDataResponse, datasources: Datasource[]): any {
     let data: any[] = [];
     let labels: string[] = [];
     let series: any[] = [];
     const chartMap = chartMappings[dataset];
-    const xAxisColumn = chartMap.columns.find((m) => m.xAxis);
-
+    const xAxisColumn = chartMap.columns.find(m => m.xAxis);
     const tempLabels: any[] = [];
-    resp.datasources.forEach((ds) => {
+    resp.datasources.forEach( ds => {
       let dataLabels = ds.data
+                        .sort((a, b) => a.day < b.day ? -1 : 1)
                         .map(d => d[xAxisColumn.key])
-                        .filter((entry, index, arr) => {
-                          return labels.indexOf(entry) === -1;
-                        });
+                        .filter((entry, index, arr) => labels.indexOf(entry) === -1);
       labels.push(...dataLabels);
-    });
-
-
-    resp.datasources.forEach((ds, index, array) => {
-      let serie = <Datasource>datasources.find((systemSource) => systemSource.id === ds.datasource);
-
+      
+      let serie = <Datasource>datasources.find(systemSource => systemSource.id === ds.datasource);
       const objKeys = Object.keys(ds.data[0]);
       series.push(
-        ...objKeys.filter(key => key !== xAxisColumn.key).map((key) => {
-            return {
+        ...objKeys.filter(key => key !== xAxisColumn.key).map(key => ({
               title: `${key} (${serie.name})`,
               datasource: serie,
               data: ds.data.map((data) => data[key])
-            } 
-          })
+            })
+          )
         );
     });
 
-    debugger;
+    let outputSeries: any[] = [];
+    let outputData: any[] = [];
+    series.forEach(serie => {
+      outputSeries.push(serie.title);
+      outputData.push(serie.data);
+    })
     
-    // return {
-    //   labels,
-    //   data: [{}, {}],
-    //   series: [], //Answered (segment_name), Missed (segment_name)
-    // }
+    return {
+      labels,
+      data: outputData,
+      series: outputSeries.sort((a,b) => a - b)
+    };
 
   }
 
