@@ -1,6 +1,7 @@
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
 import { Component } from '../../decorators';
 import { FsData, ChartResponse } from '../../services/FsData.service';
+import { FsSeriesTranslation } from '../../services/FsData.service';
 import './bar-chart.styles.scss';
 
 @Component({
@@ -22,6 +23,7 @@ import './bar-chart.styles.scss';
     title: '@',
     type: '@',
     segments: '<',
+    fsTranslations: '<',
   },
   controllerAs: 'vm',
 })
@@ -29,6 +31,7 @@ export class BarChartWidget {
   
   private type: string;
   private segments: string[] = ['all_data'];
+  private fsTranslations: FsSeriesTranslation[] = [];
   private data: ChartResponse = {
     data: [],
     labels: [],
@@ -39,7 +42,7 @@ export class BarChartWidget {
   constructor (private $scope, private FsData: FsData) { }
 
   async $onInit() {
-    this.data = await this.FsData.getData(this.type, this.segments);
+    this.data = await this.FsData.getData(this.type, this.segments, undefined, undefined, this.fsTranslations);
     this.$scope.$apply();
   }
 

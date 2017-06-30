@@ -16,7 +16,7 @@ interface FsDataResponse {
   datasources: FsDataResponseDatasource[];
 }
 
-interface FsSeriesTranslation {
+export interface FsSeriesTranslation {
   serieName: string;
   translation: string;
 }
@@ -25,6 +25,11 @@ export interface ChartResponse {
   labels: string[];
   series: string[];
   data: any[];
+}
+
+export interface ToplistData {
+  name: string;
+  value: string;
 }
 
 
@@ -56,6 +61,7 @@ class FsData implements ng.IServiceProvider {
     return {
       getDatasources: this.getDatasources.bind(this),
       getData: this.getData.bind(this),
+      getListData: this.getListData.bind(this),
     }
 
   }
@@ -78,6 +84,17 @@ class FsData implements ng.IServiceProvider {
     }
 
     return deferred.promise;
+  }
+
+  async getListData (dataset: string; datasources: string[]): ng.IPromise<ToplistData[]> {
+    const data: ToplistData[] = [
+      {name: 'Berlin', value: '20.1%'},
+      {name: 'Antwerpen', value: '41.44%'},
+      {name: 'Geschulgenhaagen', value: '9.3%'},
+      {name: 'Togo', value: '6%'},
+    ];
+    data.sort((a,b) => a.value > b.value ? -1 : 1);
+    return Promise.resolve(data);
   }
 
   async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = '', translations: FsSeriesTranslation[]): Promise<any> {
