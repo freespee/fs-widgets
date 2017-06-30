@@ -3,10 +3,19 @@
 
 ### Get started
 
-#### 1. Install via npm
+#### 1. Install
 ```bash
 npm install fs-widgets
-````
+```
+
+ Or clone via git and use dist/index.js
+
+```bash
+git clone https://github.com/freespee/fs-widgets
+```
+
+
+
 
 #### 2. Add module as dependicy
 
@@ -48,7 +57,7 @@ Translations to the series name can be configure via ***translations***. In the 
 ```html
   <fs-line-chart
     type="calls_per_day"
-    translations="myTranslations">
+    fs-translations="myTranslations">
   </fs-line-chart>
 ```
 
