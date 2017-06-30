@@ -17,7 +17,8 @@ fuse
 
 fuse.dev({
   root: 'dist/',
-  port: '4444'
+  port: '4444',
+  hmr: false,
 });
 
 fuse.run();

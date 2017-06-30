@@ -13,24 +13,17 @@
         justify-content: center;
         align-items: center;
         background: #efefef;
+        height: 100vh;
         font-size: 16px;
       }
       fs-line-chart, fs-bar-chart {
-       
-      }
-
-      div.container {
-        padding: 20px 40px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        width: 100%;
+        margin: 20px 0;
       }
     </style>
-    <link href=“https://fonts.googleapis.com/css?family=Source+Sans+Pro” rel=“stylesheet”>
+    <link href="https://fonts.googleapis.com/css?family=Zilla+Slab" rel="stylesheet">
   </head>
   <body ng-controller="MyCtrl">
-    <div class="container">
+    <div>
       <fs-bar-chart
         title="Anrufe pro Tag"
         type="calls_per_day"
