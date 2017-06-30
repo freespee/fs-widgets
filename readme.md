@@ -28,10 +28,7 @@ app.config(function(FsDataProvider) {
 
 #### 3. Add widgets directives to template
 ```html
-  <fs-line-chart
-    type="call_events_per_day"
-    translations=[]
-  >
+  <fs-line-chart type="calls_per_day">
   </fs-line-chart>
 ```
 The only attribute required is ***type***. That tells the diretive wich data to display. 
@@ -50,7 +47,7 @@ Translations to the series name can be configure via ***translations***. In the 
 
 ```html
   <fs-line-chart
-    type="call_events_per_day"
+    type="calls_per_day"
     translations="myTranslations">
   </fs-line-chart>
 ```
