@@ -66,7 +66,7 @@ class FsData implements ng.IServiceProvider {
 
   }
 
-  getDatasources(): ng.IPromise<Datasource[]> {
+  getDatasources(): Promise<Datasource[]> {
     let deferred = this.$q.defer();
 
     if(this._datasources !== undefined) {
@@ -86,14 +86,16 @@ class FsData implements ng.IServiceProvider {
     return deferred.promise;
   }
 
-  async getListData (dataset: string; datasources: string[]): ng.IPromise<ToplistData[]> {
+  async getListData (dataset: string, datasources: string[]): Promise<ToplistData[]> {
     const data: ToplistData[] = [
       {name: 'Berlin', value: '20.1%'},
       {name: 'Antwerpen', value: '41.44%'},
       {name: 'Geschulgenhaagen', value: '9.3%'},
       {name: 'Togo', value: '6%'},
     ];
-    data.sort((a,b) => a.value > b.value ? -1 : 1);
+
+    data = data.sort((a,b) => parseFloat(a.value) > parseFloat(b.value) ? -1 : 1)
+
     return Promise.resolve(data);
   }
 

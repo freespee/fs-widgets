@@ -1,3 +1,4 @@
+$side-padding: 20px;
 fs-top-list {
   display: block;
   background: #fff;
@@ -5,14 +6,43 @@ fs-top-list {
   box-shadow: 0 4px 6px rgba(0,0,0,.4);
   border-radius: 2px;
   flex-direction: column;
-  padding: 20px;
+  padding: 20px 0;
+  
   h3 {
-    font: 400 1em/1.5em "Zilla Slab", sans-serif;
+    font: 400 1em/1.5em "Source Sans Pro", sans-serif;
     color: #777;
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0;
+    padding: 0 $side-padding;
   }
   table {
+    font: 400 1em/1.5em "Source Sans Pro", sans-serif;
     width: 100%;
     border-collapse: collapse;
+    thead {
+      tr {
+        th {
+          padding: 5px $side-padding;
+          font-weight: 700;
+          text-align: left;
+        }
+      }
+    }
+    
+    tbody {
+      tr {
+        border-bottom: 1px solid #f2f2f2;
+        transition: all .2s ease-in-out;
+        &:last-child {
+          border: 0;
+        }
+        &:hover {
+          background-color: #f8f8f8;
+        }
+        td {
+          padding: 10px $side-padding;        
+        } 
+      }
+    }
+
   }
 }

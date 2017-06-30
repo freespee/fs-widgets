@@ -128,7 +128,7 @@ exports.Component = function (options) {
 ___scope___.file("components/line-chart/line-chart.styles.scss", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("components/line-chart/line-chart.styles.scss", "fs-line-chart {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-line-chart h3 {\n    font: 400 1em/1.5em \"Zilla Slab\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-line-chart canvas {\n    width: 100%; }\n\n/*# sourceMappingURL=line-chart.styles.scss.map */")
+require("fuse-box-css")("components/line-chart/line-chart.styles.scss", "fs-line-chart {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-line-chart h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-line-chart canvas {\n    width: 100%; }\n\n/*# sourceMappingURL=line-chart.styles.scss.map */")
 });
 ___scope___.file("components/bar-chart/bar-chart.component.js", function(exports, require, module, __filename, __dirname){
 var __decorate = __fsbx_decorate(arguments)
@@ -226,7 +226,7 @@ exports.BarChartWidget = BarChartWidget;
 ___scope___.file("components/bar-chart/bar-chart.styles.scss", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("components/bar-chart/bar-chart.styles.scss", "fs-bar-chart {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-bar-chart h3 {\n    font: 400 1em/1.5em \"Zilla Slab\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-bar-chart canvas {\n    width: 100%; }\n\n/*# sourceMappingURL=bar-chart.styles.scss.map */")
+require("fuse-box-css")("components/bar-chart/bar-chart.styles.scss", "fs-bar-chart {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-bar-chart h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-bar-chart canvas {\n    width: 100%; }\n\n/*# sourceMappingURL=bar-chart.styles.scss.map */")
 });
 ___scope___.file("components/top-list/top-list.component.js", function(exports, require, module, __filename, __dirname){
 var __decorate = __fsbx_decorate(arguments)
@@ -318,7 +318,7 @@ exports.TopListWidget = TopListWidget;
 ___scope___.file("components/top-list/top-list.styles.scss", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("components/top-list/top-list.styles.scss", "fs-top-list {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-top-list h3 {\n    font: 400 1em/1.5em \"Zilla Slab\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-top-list table {\n    width: 100%;\n    border-collapse: collapse; }\n\n/*# sourceMappingURL=top-list.styles.scss.map */")
+require("fuse-box-css")("components/top-list/top-list.styles.scss", "fs-top-list {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px 0; }\n  fs-top-list h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 10px 0;\n    padding: 0 20px; }\n  fs-top-list table {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    width: 100%;\n    border-collapse: collapse; }\n    fs-top-list table thead tr th {\n      padding: 5px 20px;\n      font-weight: 700;\n      text-align: left; }\n    fs-top-list table tbody tr {\n      border-bottom: 1px solid #f2f2f2;\n      transition: all .2s ease-in-out; }\n      fs-top-list table tbody tr:last-child {\n        border: 0; }\n      fs-top-list table tbody tr:hover {\n        background-color: #f8f8f8; }\n      fs-top-list table tbody tr td {\n        padding: 10px 20px; }\n\n/*# sourceMappingURL=top-list.styles.scss.map */")
 });
 ___scope___.file("services/FsData.service.js", function(exports, require, module, __filename, __dirname){
 
@@ -423,7 +423,7 @@ var FsData = (function () {
                     { name: 'Geschulgenhaagen', value: '9.3%' },
                     { name: 'Togo', value: '6%' },
                 ];
-                data.sort(function (a, b) { return a.value > b.value ? -1 : 1; });
+                data = data.sort(function (a, b) { return parseFloat(a.value) > parseFloat(b.value) ? -1 : 1; });
                 return [2 /*return*/, Promise.resolve(data)];
             });
         });
