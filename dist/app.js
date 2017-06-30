@@ -1,8 +1,8 @@
-let app = angular.module('app', ['fs-widgets', 'chart.js']);
+let app = angular.module('app', ['fs-widgets']);
 
 app.config((FsDataProvider) => {
-  FsDataProvider.customerId = 511406;
-  FsDataProvider.partnerId = 574;
+  FsDataProvider.customerId = 432657;
+  FsDataProvider.partnerId = 3;
   FsDataProvider.baseUrl = 'http://analytics.dev';
 });
 

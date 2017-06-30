@@ -14,16 +14,26 @@
         align-items: center;
         background: #efefef;
         height: 100vh;
+        font-size: 16px;
+      }
+      line-chart-widget, bar-chart-widget {
+        margin: 20px 0;
       }
     </style>
+    <link href="https://fonts.googleapis.com/css?family=Zilla+Slab" rel="stylesheet">
   </head>
   <body ng-controller="MyCtrl">
     <div>
-      <line-chart-widget
+      <fs-bar-chart
         title="Calls per day"
         type="calls_per_day"
         segments="['Everything']""
-      ></line-chart-widget>
+      ></fs-bar-chart>
+      <fs-line-chart
+        title="Calls per day"
+        type="calls_per_day"
+        segments="['Everything']""
+      ></fs-line-chart>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="index.js"></script>

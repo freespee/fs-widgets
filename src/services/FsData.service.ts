@@ -155,7 +155,13 @@ class FsData implements ng.IServiceProvider {
     return {
       labels,
       data: outputData,
-      series: outputSeries.sort((a,b) => a - b)
+      series: outputSeries.sort((a,b) => a - b),
+      options: {
+        scales: {
+          xAxes: [{gridLines: { display:false }}],
+          yAxes: [{gridLines: { display:false }}],
+        }
+      },
     };
 
   }

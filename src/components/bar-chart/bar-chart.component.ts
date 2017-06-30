@@ -1,20 +1,22 @@
-/// <reference path="../../node_modules/@types/angular/index.d.ts" />
-import { Component } from '../decorators';
-import { FsData, ChartResponse } from '../services/FsData.service';
-import './line-chart.styles.css';
+/// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+import { Component } from '../../decorators';
+import { FsData, ChartResponse } from '../../services/FsData.service';
+import './bar-chart.styles.scss';
 
 @Component({
   template: `
     <h3
       ng-bind="vm.title"
+      ng-click="swap()"
     ></h3>
     <canvas
-      id="line"
       chart-data="vm.data.data"
       chart-labels="vm.data.labels"
       chart-series="vm.data.series"
-      class="chart chart-line"
-    ></canvas>
+      chart-options="vm.data.options"
+      chart-colors="['#ff6600', '#777333']"
+      class="chart-bar"
+    ></canvas-line>
   `,
   bindings: {
     title: '@',
@@ -23,7 +25,7 @@ import './line-chart.styles.css';
   },
   controllerAs: 'vm',
 })
-export class LineChartWidget {
+export class BarChartWidget {
   
   private type: string;
   private segments: string[] = ['all_data'];
@@ -32,6 +34,7 @@ export class LineChartWidget {
     labels: [],
     series: []
   }
+  private poop: any[];
 
   constructor (private $scope, private FsData: FsData) { }
 

@@ -6,7 +6,7 @@ const fuse = FuseBox.init({
   tsConfig: './tsconfig.json',
   plugins: [
     TypeScriptHelpers(),
-    CSSPlugin(),
+    [SassPlugin(), CSSPlugin()],
   ]
 });
 
