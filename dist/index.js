@@ -86,7 +86,7 @@ var LineChartWidget = (function () {
                 switch (_b.label) {
                     case 0:
                         _a = this;
-                        return [4 /*yield*/, this.FsData.getData(this.type, this.segments)];
+                        return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '', [])];
                     case 1:
                         _a.data = _b.sent();
                         this.$scope.$apply();
@@ -316,7 +316,7 @@ var FsData = (function () {
         }
         return deferred.promise;
     };
-    FsData.prototype.getData = function (dataset, datasources, fromDate, toDate) {
+    FsData.prototype.getData = function (dataset, datasources, fromDate, toDate, translations) {
         if (fromDate === void 0) { fromDate = ''; }
         if (toDate === void 0) { toDate = ''; }
         return __awaiter(this, void 0, void 0, function () {
@@ -351,7 +351,7 @@ var FsData = (function () {
                             .get(requestUrl)
                             .then(function (response) {
                             var resp = Array.isArray(response.data) ? response.data[0] : response.data;
-                            var result = _this.transform(dataset, resp, _this._datasources);
+                            var result = _this.transform(dataset, resp, _this._datasources, translations);
                             deferred.resolve(result);
                         })
                             .catch(function (err) {
@@ -362,7 +362,8 @@ var FsData = (function () {
             });
         });
     };
-    FsData.prototype.transform = function (dataset, resp, datasources) {
+    FsData.prototype.transform = function (dataset, resp, datasources, translations) {
+        if (translations === void 0) { translations = []; }
         var data = [];
         var labels = [];
         var series = [];
@@ -377,13 +378,17 @@ var FsData = (function () {
                 .map(function (d) { return d[xAxisColumn.key]; })
                 .filter(function (entry, index, arr) { return labels.indexOf(entry) === -1; });
             labels.push.apply(labels, dataLabels);
-            var serie = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
+            var datasource = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
             var objKeys = Object.keys(ds.data[0]);
-            series.push.apply(series, objKeys.filter(function (key) { return key !== xAxisColumn.key; }).map(function (key) { return ({
-                title: serie.id === 0 ? "" + key : key + " (" + serie.name + ")",
-                datasource: serie,
-                data: ds.data.map(function (data) { return data[key]; })
-            }); }));
+            series.push.apply(series, objKeys.filter(function (key) { return key !== xAxisColumn.key; }).map(function (key) {
+                var overrideSerieName = translations.find(function (tran) { return tran.serieName === key; });
+                var serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
+                return {
+                    title: datasource.id === 0 ? "" + serieName : serieName + " (" + datasource.name + ")",
+                    datasource: datasource,
+                    data: ds.data.map(function (data) { return data[key]; })
+                };
+            }));
         });
         var outputSeries = [];
         var outputData = [];
