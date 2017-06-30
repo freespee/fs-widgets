@@ -34,7 +34,6 @@ export class LineChartWidget {
     labels: [],
     series: []
   }
-  private poop: any[];
 
   constructor (private $scope, private FsData: FsData) { }
 

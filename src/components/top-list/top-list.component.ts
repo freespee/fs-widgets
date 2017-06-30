@@ -33,7 +33,6 @@ export class TopListWidget {
   private type: string;
   private segments: string[] = ['all_data'];
   private list: ToplistData[] = [];
-  private poop: any[];
 
   constructor (private $scope, private FsData: FsData) { }
 

@@ -37,7 +37,6 @@ export class BarChartWidget {
     labels: [],
     series: []
   }
-  private poop: any[];
 
   constructor (private $scope, private FsData: FsData) { }
 
