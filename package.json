@@ -2,7 +2,7 @@
   "name": "fs-widgets",
   "version": "1.0.0",
   "description": "A angular libary for Freespee Widgets",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "node fuse.js",
     "test": "test"
