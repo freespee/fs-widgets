@@ -13,7 +13,7 @@ import './top-list.styles.scss';
       </thead>
       <tbody>
         <tr
-          ng-repeat="item in vm.list"
+          ng-repeat="item in vm.list | limitTo: 4"
         >
           <td ng-bind="item.name"></td>
           <td ng-bind="item.value"></td>
@@ -34,7 +34,7 @@ export class TopListWidget {
   private segments: string[] = ['all_data'];
   private list: ToplistData[] = [];
 
-  constructor (private $scope, private FsData: FsData) { }
+  constructor (private $scope: ng.IScope, private FsData: FsData) { }
 
   async $onInit() {
     this.list = await this.FsData.getListData(this.type, this.segments);

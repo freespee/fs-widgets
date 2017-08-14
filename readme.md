@@ -17,7 +17,13 @@ git clone https://github.com/freespee/fs-widgets
 
 
 
-#### 2. Add module as dependicy
+#### 2. Include dependencies and add module as dependency
+
+```html
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="/node_modules/Chart.min.js"></script>
+<script src="/node_modules/angular-chart.min.js"></script>
+```
 
 ```javascript
 let app = angular.module('app', ['fs-widgets']);

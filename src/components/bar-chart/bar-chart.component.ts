@@ -38,10 +38,10 @@ export class BarChartWidget {
     series: []
   }
 
-  constructor (private $scope, private FsData: FsData) { }
+  constructor (private $scope: ng.IScope, private FsData: FsData) { }
 
   async $onInit() {
-    this.data = await this.FsData.getData(this.type, this.segments, undefined, undefined, this.fsTranslations);
+    this.data = await this.FsData.getData(this.type, this.segments, '', '', this.fsTranslations);
     this.$scope.$apply();
   }
 

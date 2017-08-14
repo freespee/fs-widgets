@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="app">
   <head>
-    <title>My first angular production</title>
+    <title>My first angular project</title>
     <style>
       *, *::before, *::after {
         margin: 0;
@@ -15,16 +15,16 @@
         background: #efefef;
         font-size: 16px;
       }
-      fs-line-chart, fs-bar-chart {
-       
-      }
-
       div.container {
         padding: 20px 40px;
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         justify-content: space-around;
         width: 100%;
+      }
+      fs-bar-chart, fs-line-chart, fs-top-list {
+        margin: 20px;
       }
     </style>
     <link href=“https://fonts.googleapis.com/css?family=Source+Sans+Pro” rel=“stylesheet”>
@@ -49,6 +49,8 @@
       ></fs-top-list>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="/Chart.min.js"></script>
+    <script src="/angular-chart.min.js"></script>
     <script src="index.js"></script>
     <script src="app.js"></script>
   </body>

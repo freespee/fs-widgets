@@ -1,4 +1,4 @@
-const {FuseBox, TypeScriptHelpers, Sparky, CSSPlugin, SassPlugin} = require('fuse-box');
+const { FuseBox, TypeScriptHelpers, Sparky, CSSPlugin, SassPlugin } = require('fuse-box');
 
 const fuse = FuseBox.init({
   homeDir: './src/',

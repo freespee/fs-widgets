@@ -37,6 +37,8 @@ class FsData implements ng.IServiceProvider {
   _customerId: number;
   _partnerId: number;
   _baseUrl: string = 'https://analytics.freespee.com';
+  _datasourceUrl: string = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
+  _dataUrl: string = '/api/widgets/datasources/data/{{datasources}}/{{partnerId}}/{{customerId}}'
   _datasources: Datasource[];
   $http: ng.IHttpService;
   $q: ng.IQService;
@@ -54,9 +56,24 @@ class FsData implements ng.IServiceProvider {
       this._baseUrl = baseUrl;
   }
 
+  set datasourceUrl(url: string) {
+    this._datasourceUrl = url;
+  }
+
+  set dataUrl(url: string) {
+    this._dataUrl = url;
+  }
+
   $get($http: ng.IHttpService, $q: ng.IQService) {
     this.$http = $http;
     this.$q = $q;
+
+    this._dataUrl = this._dataUrl
+                      .replace(/{{customerId}}/g, this._customerId.toString())
+                      .replace(/{{partnerId}}/g, this._partnerId.toString());
+    this._datasourceUrl = this._datasourceUrl
+                          .replace(/{{customerId}}/g, this._customerId.toString())
+                          .replace(/{{partnerId}}/g, this._partnerId.toString());
 
     return {
       getDatasources: this.getDatasources.bind(this),
@@ -66,28 +83,32 @@ class FsData implements ng.IServiceProvider {
 
   }
 
-  getDatasources(): Promise<Datasource[]> {
+  getDatasources(): ng.IPromise<Datasource[]> {
     let deferred = this.$q.defer();
+    debugger;
 
     if(this._datasources !== undefined) {
       deferred.resolve(this._datasources);
     } else {
       this.$http
-        .get(`${this._baseUrl}/be/widgets/datasources?customer_id=${this._customerId}&partner_id=${this._partnerId}`)
+        .get(`${this._baseUrl}${this._datasourceUrl}`)
         .then((response: IHttpPromiseCallbackArg<Datasource[]>) => {
           this._datasources = <Datasource[]>response.data;
+          console.log('resolving');
           deferred.resolve(this._datasources);
         })
         .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
+          console.log('resolving in catch');
           deferred.reject(err.statusText || 'A error occured while fetching datasources');
         });
     }
+
 
     return deferred.promise;
   }
 
   async getListData (dataset: string, datasources: string[]): Promise<ToplistData[]> {
-    const data: ToplistData[] = [
+    let data: ToplistData[] = [
       {name: 'Berlin', value: '20.1%'},
       {name: 'Antwerpen', value: '41.44%'},
       {name: 'Geschulgenhaagen', value: '9.3%'},
@@ -105,7 +126,7 @@ class FsData implements ng.IServiceProvider {
     let datasourceIds: number[] = [];
     let nonMatchingDatasources: string[] = [];
 
-    let sources = await this.getDatasources(); 
+    let sources = await this.getDatasources();
     datasources.forEach((ds) => {
       let datasourceByName: Datasource  = <Datasource>sources.find(s => s.name.toLowerCase() === (""+ds).toLowerCase());
       if(datasourceByName !== undefined) {
@@ -124,11 +145,10 @@ class FsData implements ng.IServiceProvider {
       datasourceIds.push(0);
     }
     
-    let requestUrl = `${this._baseUrl}/be/widgets/datasources/data?widget_name=${dataset}&customer_id=${this._customerId}&partner_id=${this._partnerId}&datasources=${datasourceIds.join(',')}&from_date=${fromDate}&to_date=${toDate}`;
+    let requestUrl = `${this._baseUrl}${this._dataUrl}`.replace(/{{datasources}}/g, datasources.join(','));
     this.$http
       .get(requestUrl)
       .then((response: IHttpPromiseCallbackArg<FsDataResponse>) => {
-
         let resp = Array.isArray(response.data) ? response.data[0] : response.data; 
         let result = this.transform(dataset, <FsDataResponse>resp, this._datasources, translations);
         deferred.resolve(result);
