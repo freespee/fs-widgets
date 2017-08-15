@@ -2,7 +2,7 @@ import { chartMappings } from './../chartMappings';
 import { IHttpPromiseCallbackArg } from "@types/angular";
 
 interface Datasource {
-  id: number;
+  datasource: number;
   name: string;
 }
 
@@ -85,7 +85,6 @@ class FsData implements ng.IServiceProvider {
 
   getDatasources(): ng.IPromise<Datasource[]> {
     let deferred = this.$q.defer();
-    debugger;
 
     if(this._datasources !== undefined) {
       deferred.resolve(this._datasources);
@@ -177,7 +176,7 @@ class FsData implements ng.IServiceProvider {
                         .filter((entry, index, arr) => labels.indexOf(entry) === -1);
       labels.push(...dataLabels);
       
-      let datasource = <Datasource>datasources.find(systemSource => systemSource.id === ds.datasource);
+      let datasource = <Datasource>datasources.find(systemSource => systemSource.datasource === ds.datasource);
       const objKeys = Object.keys(ds.data[0]);
       series.push(
         ...objKeys.filter(key => key !== xAxisColumn.key).map((key) => {

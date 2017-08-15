@@ -415,7 +415,6 @@ var FsData = (function () {
     FsData.prototype.getDatasources = function () {
         var _this = this;
         var deferred = this.$q.defer();
-        debugger;
         if (this._datasources !== undefined) {
             deferred.resolve(this._datasources);
         }
@@ -511,7 +510,7 @@ var FsData = (function () {
                 .map(function (d) { return d[xAxisColumn.key]; })
                 .filter(function (entry, index, arr) { return labels.indexOf(entry) === -1; });
             labels.push.apply(labels, dataLabels);
-            var datasource = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
+            var datasource = datasources.find(function (systemSource) { return systemSource.datasource === ds.datasource; });
             var objKeys = Object.keys(ds.data[0]);
             series.push.apply(series, objKeys.filter(function (key) { return key !== xAxisColumn.key; }).map(function (key) {
                 var overrideSerieName = translations.find(function (tran) { return tran.serieName === key; });
