@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var line_chart_component_1 = require("./components/line-chart/line-chart.component");
 var bar_chart_component_1 = require("./components/bar-chart/bar-chart.component");
 var top_list_component_1 = require("./components/top-list/top-list.component");
+var single_value_component_1 = require("./components/single-value/single-value.component");
 var FsData_service_1 = require("./services/FsData.service");
 angular
     .module('fs-widgets', ['chart.js'])
@@ -15,7 +16,8 @@ angular
     .run(function ($http) { return $http.defaults.headers.common['Access-Control-Allow-Origin'] = '*'; })
     .component('fsLineChart', line_chart_component_1.LineChartWidget)
     .component('fsBarChart', bar_chart_component_1.BarChartWidget)
-    .component('fsTopList', top_list_component_1.TopListWidget);
+    .component('fsTopList', top_list_component_1.TopListWidget)
+    .component('fsSingleValue', single_value_component_1.SingleValueWidget);
 
 });
 ___scope___.file("components/line-chart/line-chart.component.js", function(exports, require, module, __filename, __dirname){
@@ -316,6 +318,97 @@ ___scope___.file("components/top-list/top-list.styles.scss", function(exports, r
 
 require("fuse-box-css")("components/top-list/top-list.styles.scss", "fs-top-list {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px 0; }\n  fs-top-list h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 10px 0;\n    padding: 0 20px; }\n  fs-top-list table {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    width: 100%;\n    border-collapse: collapse; }\n    fs-top-list table thead tr th {\n      padding: 5px 20px;\n      font-weight: 700;\n      text-align: left; }\n    fs-top-list table tbody tr {\n      border-bottom: 1px solid #f2f2f2;\n      transition: all .2s ease-in-out; }\n      fs-top-list table tbody tr:last-child {\n        border: 0; }\n      fs-top-list table tbody tr:hover {\n        background-color: #f8f8f8; }\n      fs-top-list table tbody tr td {\n        padding: 10px 20px; }\n\n/*# sourceMappingURL=top-list.styles.scss.map */")
 });
+___scope___.file("components/single-value/single-value.component.js", function(exports, require, module, __filename, __dirname){
+var __decorate = __fsbx_decorate(arguments)
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+var decorators_1 = require("../../decorators");
+require("./single-value.styles.scss");
+var SingleValueWidget = (function () {
+    function SingleValueWidget($scope, FsData) {
+        this.$scope = $scope;
+        this.FsData = FsData;
+        this.segment = 'all_data';
+    }
+    SingleValueWidget.prototype.$onInit = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this;
+                        return [4 /*yield*/, this.FsData.getSingleValue(this.type, this.segment, '', '')];
+                    case 1:
+                        _a.value = _b.sent();
+                        this.$scope.$apply();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    SingleValueWidget = __decorate([
+        decorators_1.Component({
+            template: "\n    <h3\n      ng-bind=\"vm.title\"\n      ng-click=\"swap()\"\n    ></h3>\n    <span class=\"__fs-single-value-value\" ng-bind=\"vm.value\"></span>\n  ",
+            bindings: {
+                title: '@',
+                type: '@',
+                segment: '@'
+            },
+            controllerAs: 'vm',
+        })
+    ], SingleValueWidget);
+    return SingleValueWidget;
+}());
+exports.SingleValueWidget = SingleValueWidget;
+
+});
+___scope___.file("components/single-value/single-value.styles.scss", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("components/single-value/single-value.styles.scss", "fs-single-value {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-single-value h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-single-value span {\n    font: 400 1.5em/1.8em \"Source Sans Pro\", sans-serif;\n    display: block;\n    text-align: center; }\n\n/*# sourceMappingURL=single-value.styles.scss.map */")
+});
 ___scope___.file("services/FsData.service.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
@@ -410,7 +503,20 @@ var FsData = (function () {
             getDatasources: this.getDatasources.bind(this),
             getData: this.getData.bind(this),
             getListData: this.getListData.bind(this),
+            getSingleValue: this.getSingleValue.bind(this),
         };
+    };
+    FsData.prototype.getSingleValue = function (dataset, datasources, fromDate, toDate) {
+        if (fromDate === void 0) { fromDate = ''; }
+        if (toDate === void 0) { toDate = ''; }
+        return __awaiter(this, void 0, void 0, function () {
+            var deferred;
+            return __generator(this, function (_a) {
+                deferred = this.$q.defer();
+                deferred.resolve('1100 calls');
+                return [2 /*return*/, deferred.promise];
+            });
+        });
     };
     FsData.prototype.getDatasources = function () {
         var _this = this;

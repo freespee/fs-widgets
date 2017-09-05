@@ -32,6 +32,10 @@ export interface ToplistData {
   value: string;
 }
 
+export interface SingleValueResponse {
+  value: string;
+}
+
 
 class FsData implements ng.IServiceProvider {
   _customerId: number;
@@ -79,8 +83,16 @@ class FsData implements ng.IServiceProvider {
       getDatasources: this.getDatasources.bind(this),
       getData: this.getData.bind(this),
       getListData: this.getListData.bind(this),
+      getSingleValue: this.getSingleValue.bind(this),
     }
 
+  }
+
+  async getSingleValue(dataset: string, datasources: string, fromDate: string = '', toDate: string = ''): Promise<any>  {
+    let deferred = this.$q.defer();
+    deferred.resolve('1100 calls');
+
+   return deferred.promise;
   }
 
   getDatasources(): ng.IPromise<Datasource[]> {

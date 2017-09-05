@@ -1,0 +1,19 @@
+fs-single-value {
+  display: block;
+  background: #fff;
+  width: 500px;
+  box-shadow: 0 4px 6px rgba(0,0,0,.4);
+  border-radius: 2px;
+  flex-direction: column;
+  padding: 20px;
+  h3 {
+    font: 400 1em/1.5em "Source Sans Pro", sans-serif;
+    color: #777;
+    margin: 0 0 20px 0;
+  }
+  span {
+    font: 400 1.5em/1.8em "Source Sans Pro", sans-serif;
+    display: block;
+    text-align: center;
+  }
+}
