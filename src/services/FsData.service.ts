@@ -105,11 +105,9 @@ class FsData implements ng.IServiceProvider {
         .get(`${this._baseUrl}${this._datasourceUrl}`)
         .then((response: IHttpPromiseCallbackArg<Datasource[]>) => {
           this._datasources = <Datasource[]>response.data;
-          console.log('resolving');
           deferred.resolve(this._datasources);
         })
         .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
-          console.log('resolving in catch');
           deferred.reject(err.statusText || 'A error occured while fetching datasources');
         });
     }
@@ -132,7 +130,7 @@ class FsData implements ng.IServiceProvider {
   }
 
   async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = '', translations: FsSeriesTranslation[]): Promise<any> {
-    
+
     let deferred = this.$q.defer();
     let datasourceIds: number[] = [];
     let nonMatchingDatasources: string[] = [];
@@ -146,7 +144,7 @@ class FsData implements ng.IServiceProvider {
         nonMatchingDatasources.push(ds);
       }
     })
-    
+
 
     if(nonMatchingDatasources.length > 0) {
       console.warn(`Couldnt lookup existing datasource id(s) for ${nonMatchingDatasources.join(',')}.`);
@@ -155,12 +153,12 @@ class FsData implements ng.IServiceProvider {
     if(datasourceIds.length === 0) {
       datasourceIds.push(0);
     }
-    
+
     let requestUrl = `${this._baseUrl}${this._dataUrl}`.replace(/{{datasources}}/g, datasources.join(','));
     this.$http
       .get(requestUrl)
       .then((response: IHttpPromiseCallbackArg<FsDataResponse>) => {
-        let resp = Array.isArray(response.data) ? response.data[0] : response.data; 
+        let resp = Array.isArray(response.data) ? response.data[0] : response.data;
         let result = this.transform(dataset, <FsDataResponse>resp, this._datasources, translations);
         deferred.resolve(result);
       })
@@ -180,15 +178,15 @@ class FsData implements ng.IServiceProvider {
       throw new Error(`Chartmapping missing for ${dataset}`);
     }
     const xAxisColumn = chartMap.columns.find(m => m.xAxis);
-
+    debugger;
     resp.datasources.forEach( ds => {
       let dataLabels = ds.data
                         .sort((a, b) => a.day < b.day ? -1 : 1)
                         .map(d => d[xAxisColumn.key])
                         .filter((entry, index, arr) => labels.indexOf(entry) === -1);
       labels.push(...dataLabels);
-      
-      let datasource = <Datasource>datasources.find(systemSource => systemSource.datasource === ds.datasource);
+
+      let datasource = <Datasource>datasources.find(systemSource => systemSource.id === ds.datasource);
       const objKeys = Object.keys(ds.data[0]);
       series.push(
         ...objKeys.filter(key => key !== xAxisColumn.key).map((key) => {
@@ -199,7 +197,7 @@ class FsData implements ng.IServiceProvider {
                 datasource: datasource,
                 data: ds.data.map((data) => data[key])
               }
-             
+
             })
         );
     });
@@ -210,7 +208,7 @@ class FsData implements ng.IServiceProvider {
       outputSeries.push(serie.title);
       outputData.push(serie.data);
     })
-    
+
     return {
       labels,
       data: outputData,
