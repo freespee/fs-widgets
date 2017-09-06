@@ -608,7 +608,6 @@ var FsData = /** @class */ (function () {
             throw new Error("Chartmapping missing for " + dataset);
         }
         var xAxisColumn = chartMap.columns.find(function (m) { return m.xAxis; });
-        debugger;
         resp.datasources.forEach(function (ds) {
             var dataLabels = ds.data
                 .sort(function (a, b) { return a.day < b.day ? -1 : 1; })

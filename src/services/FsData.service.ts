@@ -178,7 +178,6 @@ class FsData implements ng.IServiceProvider {
       throw new Error(`Chartmapping missing for ${dataset}`);
     }
     const xAxisColumn = chartMap.columns.find(m => m.xAxis);
-    debugger;
     resp.datasources.forEach( ds => {
       let dataLabels = ds.data
                         .sort((a, b) => a.day < b.day ? -1 : 1)
