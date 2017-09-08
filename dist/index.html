@@ -31,10 +31,10 @@
   </head>
   <body ng-controller="MyCtrl">
     <div class="container">
-      <fs-bar-chart
+      <fs-line-chart
               title="Calls per day"
               type="calls_per_day"
-      ></fs-bar-chart>
+      ></fs-line-chart>
       <fs-top-list
               title="Top customers by calls"
               type="top_customers_by_calls"
@@ -58,6 +58,10 @@
       <fs-single-value
               title="Call durations"
               type="call_durations"
+      ></fs-single-value>
+      <fs-single-value
+              title="Missed calls"
+              type="missed_calls"
       ></fs-single-value>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
