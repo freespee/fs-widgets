@@ -48,7 +48,7 @@ app.config(function(FsDataProvider) {
 ```
 The only attribute required is ***type***. That tells the diretive wich data to display. 
 
-You can optionally pass 
+You can optionally pass ***title*** to specify the header of thw widget, and
 ***segments*** to target specific segments of your visitors. 
 
 Translations to the series name can be configure via ***translations***. In the case of call_events_per_day two series will be displayed, _answered_ and _missed_. To override those you can pass an array of objects that looks like this.
@@ -62,6 +62,7 @@ Translations to the series name can be configure via ***translations***. In the 
 
 ```html
   <fs-line-chart
+    title="Calls per day"
     type="calls_per_day"
     fs-translations="myTranslations">
   </fs-line-chart>
