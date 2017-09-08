@@ -1,18 +1,77 @@
-export const chartMappings = {
+export const axisChartMappings = {
   calls_per_day: {
     columns: [
       {
-        key: 'day',
-        xAxis: true
+        key: 'name',
+        xAxis: true,
       },
       {
-        key: 'answered',
-        xAxis: false
+        key: 'val',
+        xAxis: false,
+      }
+    ]
+  },
+  daily_call_distribution: {
+    columns: [
+      {
+        key: 'name',
+        xAxis: true,
       },
       {
-        key: 'missed',
-        xAxis: false
-      }      
+        key: 'val',
+        xAxis: false,
+      }
+    ]
+  },
+  call_length_distribution: {
+      columns: [
+      {
+        key: 'name',
+        xAxis: true,
+      },
+      {
+        key: 'val',
+        xAxis: false,
+      }
+    ]
+  },
+  calls_top_attributions: {
+    columns: [
+      {
+        key: 'name',
+        xAxis: true,
+      },
+      {
+        key: 'val',
+        xAxis: false,
+      }
+    ]
+  }
+};
+
+export const listChartMappings = {
+  top_customers_by_calls: {
+    columns: [
+      {
+        key: 'name',
+        name: true
+      },
+      {
+        key: 'val',
+        name: false
+      }
+    ]
+  },
+  geographic_origin: {
+    columns: [
+      {
+        key: 'name',
+        name: true
+      },
+      {
+        key: 'val',
+        name: false
+      }
     ]
   }
 };

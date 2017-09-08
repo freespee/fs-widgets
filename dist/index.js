@@ -23,12 +23,55 @@ angular
 ___scope___.file("components/line-chart/line-chart.component.js", function(exports, require, module, __filename, __dirname){
 var __decorate = __fsbx_decorate(arguments)
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+/// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+var axis_chart_component_1 = require("../axisChart/axis-chart.component");
+var decorators_1 = require("../../decorators");
+require("../axisChart/line-chart.styles.scss");
+var LineChartWidget = /** @class */ (function (_super) {
+    __extends(LineChartWidget, _super);
+    function LineChartWidget($scope, FsData) {
+        var _this = _super.call(this, $scope, FsData) || this;
+        _this.$scope = $scope;
+        _this.FsData = FsData;
+        return _this;
+    }
+    LineChartWidget = __decorate([
+        decorators_1.Component({
+            template: "\n    <h3\n      ng-bind=\"vm.title\"\n      ng-click=\"swap()\"\n    ></h3>\n    <canvas\n      chart-data=\"vm.data.data\"\n      chart-labels=\"vm.data.labels\"\n      chart-series=\"vm.data.series\"\n      chart-options=\"vm.data.options\"\n      chart-colors=\"['#ff6600', '#777333']\"\n      class=\"chart-line\"\n    ></canvas-line>\n  ",
+            bindings: {
+                title: '@',
+                type: '@',
+                segments: '<',
+                fsTranslations: '<'
+            },
+            controllerAs: 'vm',
+        })
+    ], LineChartWidget);
+    return LineChartWidget;
+}(axis_chart_component_1.AxisChartWidget));
+exports.LineChartWidget = LineChartWidget;
+
+});
+___scope___.file("components/axisChart/axis-chart.component.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -66,50 +109,190 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
-var decorators_1 = require("../../decorators");
-require("./line-chart.styles.scss");
-var LineChartWidget = /** @class */ (function () {
-    function LineChartWidget($scope, FsData) {
+var chartMappings_1 = require("../../chartMappings");
+require("./bar-chart.styles.scss");
+var AxisChartWidget = /** @class */ (function () {
+    function AxisChartWidget($scope, FsData) {
         this.$scope = $scope;
         this.FsData = FsData;
         this.segments = ['all_data'];
+        this.fsTranslations = [];
         this.data = {
             data: [],
             labels: [],
-            series: []
+            series: [],
+            options: []
         };
     }
-    LineChartWidget.prototype.$onInit = function () {
+    AxisChartWidget.prototype.setResponse = function (dataset, value, datasources, translations) {
+        if (translations === void 0) { translations = []; }
+        var data = [];
+        var labels = [];
+        var series = [];
+        var chartMap = chartMappings_1.axisChartMappings[dataset];
+        if (chartMap === undefined) {
+            throw new Error("Chartmapping missing for " + dataset);
+        }
+        var xAxisColumn = chartMap.columns.find(function (m) { return m.xAxis; });
+        var yAxisColumn = chartMap.columns.find(function (m) { return !m.xAxis; });
+        value.datasources.forEach(function (ds) {
+            var dataLabels = ds.data
+                .sort(function (a, b) { return a.name < b.name ? -1 : 1; })
+                .map(function (d) { return d[xAxisColumn.key]; })
+                .filter(function (entry, index, arr) { return labels.indexOf(entry) === -1; });
+            labels.push.apply(labels, dataLabels);
+            var datasource = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
+            var objKeys = Object.keys(ds.data[0]);
+            series.push.apply(series, objKeys.filter(function (key) { return key === yAxisColumn.key; }).map(function (key) {
+                var overrideSerieName = translations.find(function (tran) { return tran.serieName === key; });
+                var serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
+                return {
+                    title: datasource.datasource === 0 ? "" + serieName : serieName + " (" + datasource.name + ")",
+                    datasource: datasource,
+                    data: ds.data.map(function (data) { return data[key]; })
+                };
+            }));
+        });
+        var outputSeries = [];
+        var outputData = [];
+        series.forEach(function (serie) {
+            outputSeries.push(serie.title);
+            outputData.push(serie.data);
+        });
+        this.data = {
+            labels: labels,
+            data: outputData,
+            series: outputSeries.sort(function (a, b) { return a - b; }),
+            options: {
+                scales: {
+                    xAxes: [{ gridLines: { display: false } }],
+                    yAxes: [{ gridLines: { display: false } }],
+                }
+            }
+        };
+    };
+    AxisChartWidget.prototype.$onInit = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this;
-                        return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '', [])];
+            var response, datasources;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '')];
                     case 1:
-                        _a.data = _b.sent();
+                        response = _a.sent();
+                        return [4 /*yield*/, this.FsData.getDatasources()];
+                    case 2:
+                        datasources = _a.sent();
+                        this.setResponse(this.type, response, datasources, this.fsTranslations);
                         this.$scope.$apply();
                         return [2 /*return*/];
                 }
             });
         });
     };
-    LineChartWidget = __decorate([
-        decorators_1.Component({
-            template: "\n    <h3\n      ng-bind=\"vm.title\"\n      ng-click=\"swap()\"\n    ></h3>\n    <canvas\n      chart-data=\"vm.data.data\"\n      chart-labels=\"vm.data.labels\"\n      chart-series=\"vm.data.series\"\n      chart-options=\"vm.data.options\"\n      chart-colors=\"['#ff6600', '#777333']\"\n      class=\"chart-line\"\n    ></canvas-line>\n  ",
-            bindings: {
-                title: '@',
-                type: '@',
-                segments: '<',
+    AxisChartWidget.prototype.getAxisData = function (dataset, datasources) {
+        this.data = {
+            labels: ['2017-01-01', '2017-01-02'],
+            data: ['1', '2'],
+            series: ['1'],
+            options: {
+                scales: {
+                    xAxes: [{ gridLines: { display: false } }],
+                    yAxes: [{ gridLines: { display: false } }],
+                }
             },
-            controllerAs: 'vm',
-        })
-    ], LineChartWidget);
-    return LineChartWidget;
+        };
+    };
+    return AxisChartWidget;
 }());
-exports.LineChartWidget = LineChartWidget;
+exports.AxisChartWidget = AxisChartWidget;
 
+});
+___scope___.file("chartMappings.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.axisChartMappings = {
+    calls_per_day: {
+        columns: [
+            {
+                key: 'name',
+                xAxis: true,
+            },
+            {
+                key: 'val',
+                xAxis: false,
+            }
+        ]
+    },
+    daily_call_distribution: {
+        columns: [
+            {
+                key: 'name',
+                xAxis: true,
+            },
+            {
+                key: 'val',
+                xAxis: false,
+            }
+        ]
+    },
+    call_length_distribution: {
+        columns: [
+            {
+                key: 'name',
+                xAxis: true,
+            },
+            {
+                key: 'val',
+                xAxis: false,
+            }
+        ]
+    },
+    calls_top_attributions: {
+        columns: [
+            {
+                key: 'name',
+                xAxis: true,
+            },
+            {
+                key: 'val',
+                xAxis: false,
+            }
+        ]
+    }
+};
+exports.listChartMappings = {
+    top_customers_by_calls: {
+        columns: [
+            {
+                key: 'name',
+                name: true
+            },
+            {
+                key: 'val',
+                name: false
+            }
+        ]
+    },
+    geographic_origin: {
+        columns: [
+            {
+                key: 'name',
+                name: true
+            },
+            {
+                key: 'val',
+                name: false
+            }
+        ]
+    }
+};
+
+});
+___scope___.file("components/axisChart/bar-chart.styles.scss", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("components/axisChart/bar-chart.styles.scss", "fs-bar-chart {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-bar-chart h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-bar-chart canvas {\n    width: 100%; }\n\n/*# sourceMappingURL=bar-chart.styles.scss.map */")
 });
 ___scope___.file("decorators.js", function(exports, require, module, __filename, __dirname){
 
@@ -123,87 +306,43 @@ exports.Component = function (options) {
 };
 
 });
-___scope___.file("components/line-chart/line-chart.styles.scss", function(exports, require, module, __filename, __dirname){
+___scope___.file("components/axisChart/line-chart.styles.scss", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("components/line-chart/line-chart.styles.scss", "fs-line-chart {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-line-chart h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-line-chart canvas {\n    width: 100%; }\n\n/*# sourceMappingURL=line-chart.styles.scss.map */")
+require("fuse-box-css")("components/axisChart/line-chart.styles.scss", "fs-line-chart {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-line-chart h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-line-chart canvas {\n    width: 100%; }\n\n/*# sourceMappingURL=line-chart.styles.scss.map */")
 });
 ___scope___.file("components/bar-chart/bar-chart.component.js", function(exports, require, module, __filename, __dirname){
 var __decorate = __fsbx_decorate(arguments)
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+var axis_chart_component_1 = require("../axisChart/axis-chart.component");
 var decorators_1 = require("../../decorators");
-require("./bar-chart.styles.scss");
-var BarChartWidget = /** @class */ (function () {
+require("../axisChart/bar-chart.styles.scss");
+var BarChartWidget = /** @class */ (function (_super) {
+    __extends(BarChartWidget, _super);
     function BarChartWidget($scope, FsData) {
-        this.$scope = $scope;
-        this.FsData = FsData;
-        this.segments = ['all_data'];
-        this.fsTranslations = [];
-        this.data = {
-            data: [],
-            labels: [],
-            series: []
-        };
+        var _this = _super.call(this, $scope, FsData) || this;
+        _this.$scope = $scope;
+        _this.FsData = FsData;
+        return _this;
     }
-    BarChartWidget.prototype.$onInit = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this;
-                        return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '', this.fsTranslations)];
-                    case 1:
-                        _a.data = _b.sent();
-                        this.$scope.$apply();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     BarChartWidget = __decorate([
         decorators_1.Component({
             template: "\n    <h3\n      ng-bind=\"vm.title\"\n      ng-click=\"swap()\"\n    ></h3>\n    <canvas\n      chart-data=\"vm.data.data\"\n      chart-labels=\"vm.data.labels\"\n      chart-series=\"vm.data.series\"\n      chart-options=\"vm.data.options\"\n      chart-colors=\"['#ff6600', '#777333']\"\n      class=\"chart-bar\"\n    ></canvas-line>\n  ",
@@ -211,20 +350,15 @@ var BarChartWidget = /** @class */ (function () {
                 title: '@',
                 type: '@',
                 segments: '<',
-                fsTranslations: '<',
+                fsTranslations: '<'
             },
             controllerAs: 'vm',
         })
     ], BarChartWidget);
     return BarChartWidget;
-}());
+}(axis_chart_component_1.AxisChartWidget));
 exports.BarChartWidget = BarChartWidget;
 
-});
-___scope___.file("components/bar-chart/bar-chart.styles.scss", function(exports, require, module, __filename, __dirname){
-
-
-require("fuse-box-css")("components/bar-chart/bar-chart.styles.scss", "fs-bar-chart {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-bar-chart h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-bar-chart canvas {\n    width: 100%; }\n\n/*# sourceMappingURL=bar-chart.styles.scss.map */")
 });
 ___scope___.file("components/top-list/top-list.component.js", function(exports, require, module, __filename, __dirname){
 var __decorate = __fsbx_decorate(arguments)
@@ -272,6 +406,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+var chartMappings_1 = require("../../chartMappings");
 var decorators_1 = require("../../decorators");
 require("./top-list.styles.scss");
 var TopListWidget = /** @class */ (function () {
@@ -281,25 +416,52 @@ var TopListWidget = /** @class */ (function () {
         this.segments = ['all_data'];
         this.list = [];
     }
+    TopListWidget.prototype.setResponse = function (dataset, value) {
+        var data = [];
+        var chartMap = chartMappings_1.listChartMappings[dataset];
+        if (chartMap === undefined) {
+            throw new Error("Chartmapping missing for " + dataset);
+        }
+        var nameColumn = chartMap.columns.find(function (m) { return m.name; });
+        var valueColumn = chartMap.columns.find(function (m) { return !m.name; });
+        value.datasources.forEach(function (ds) {
+            var dataEntries = ds.data
+                .filter(function (entry, index, arr) { return data.indexOf(entry) === -1; });
+            data.push.apply(data, dataEntries);
+        });
+        var outputList = [];
+        data.forEach(function (serie) {
+            outputList.push({ 'name': serie[nameColumn.key], 'value': serie[valueColumn.key] });
+        });
+        this.list = outputList.sort(function (a, b) { return a - b; });
+    };
     TopListWidget.prototype.$onInit = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this;
-                        return [4 /*yield*/, this.FsData.getListData(this.type, this.segments)];
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '')];
                     case 1:
-                        _a.list = _b.sent();
+                        response = _a.sent();
+                        this.setResponse(this.type, response);
                         this.$scope.$apply();
                         return [2 /*return*/];
                 }
             });
         });
     };
+    TopListWidget.prototype.getListData = function (dataset, datasources) {
+        var data = [
+            { name: 'Berlin', value: '20.1%' },
+            { name: 'Antwerpen', value: '41.44%' },
+            { name: 'Geschulgenhaagen', value: '9.3%' },
+            { name: 'Togo', value: '6%' }
+        ];
+        this.list = data.sort(function (a, b) { return parseFloat(a.value) > parseFloat(b.value) ? -1 : 1; });
+    };
     TopListWidget = __decorate([
         decorators_1.Component({
-            template: "\n    <h3>{{vm.title}}</h3>\n    <table cell-spacing=\"0\" cell-padding=\"0\">\n      <thead>\n        <th>Name</th>\n        <th>Value</th>\n      </thead>\n      <tbody>\n        <tr\n          ng-repeat=\"item in vm.list | limitTo: 4\"\n        >\n          <td ng-bind=\"item.name\"></td>\n          <td ng-bind=\"item.value\"></td>\n        </tr>\n      </tbody>\n    </table>\n  ",
+            template: "\n    <h3>{{vm.title}}</h3>\n    <table cell-spacing=\"0\" cell-padding=\"0\">\n      <thead>\n        <th>Name</th>\n        <th>Value</th>\n      </thead>\n      <tbody>\n        <tr\n          ng-repeat=\"item in vm.list | orderBy:'value':true | limitTo: 4\"\n        >\n          <td ng-bind=\"item.name\"></td>\n          <td ng-bind=\"item.value\"></td>\n        </tr>\n      </tbody>\n    </table>\n  ",
             bindings: {
                 title: '@',
                 type: '@',
@@ -370,23 +532,28 @@ var SingleValueWidget = /** @class */ (function () {
     function SingleValueWidget($scope, FsData) {
         this.$scope = $scope;
         this.FsData = FsData;
-        this.segment = 'all_data';
+        this.segments = ['all_data'];
     }
+    SingleValueWidget.prototype.setResponse = function (value) {
+        this.value = value.datasources[0].data;
+    };
     SingleValueWidget.prototype.$onInit = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this;
-                        return [4 /*yield*/, this.FsData.getSingleValue(this.type, this.segment, '', '')];
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '')];
                     case 1:
-                        _a.value = _b.sent();
+                        response = _a.sent();
+                        this.setResponse(response);
                         this.$scope.$apply();
                         return [2 /*return*/];
                 }
             });
         });
+    };
+    SingleValueWidget.prototype.getSingleValue = function (dataset, datasources) {
+        this.value = '1100 calls';
     };
     SingleValueWidget = __decorate([
         decorators_1.Component({
@@ -448,12 +615,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var chartMappings_1 = require("./../chartMappings");
 var FsData = /** @class */ (function () {
     function FsData() {
         this._baseUrl = 'https://analytics.freespee.com';
         this._datasourceUrl = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
-        this._dataUrl = '/api/widgets/datasources/data/{{datasources}}/{{partnerId}}/{{customerId}}';
+        this._dataUrl = '/api/widgets/data?type={{type}}&customer_id={{customerId}}';
     }
     Object.defineProperty(FsData.prototype, "partnerId", {
         set: function (partnerId) {
@@ -494,29 +660,13 @@ var FsData = /** @class */ (function () {
         this.$http = $http;
         this.$q = $q;
         this._dataUrl = this._dataUrl
-            .replace(/{{customerId}}/g, this._customerId.toString())
-            .replace(/{{partnerId}}/g, this._partnerId.toString());
+            .replace(/{{customerId}}/g, this._customerId.toString());
         this._datasourceUrl = this._datasourceUrl
-            .replace(/{{customerId}}/g, this._customerId.toString())
-            .replace(/{{partnerId}}/g, this._partnerId.toString());
+            .replace(/{{customerId}}/g, this._customerId.toString());
         return {
             getDatasources: this.getDatasources.bind(this),
-            getData: this.getData.bind(this),
-            getListData: this.getListData.bind(this),
-            getSingleValue: this.getSingleValue.bind(this),
+            getData: this.getData.bind(this)
         };
-    };
-    FsData.prototype.getSingleValue = function (dataset, datasources, fromDate, toDate) {
-        if (fromDate === void 0) { fromDate = ''; }
-        if (toDate === void 0) { toDate = ''; }
-        return __awaiter(this, void 0, void 0, function () {
-            var deferred;
-            return __generator(this, function (_a) {
-                deferred = this.$q.defer();
-                deferred.resolve('1100 calls');
-                return [2 /*return*/, deferred.promise];
-            });
-        });
     };
     FsData.prototype.getDatasources = function () {
         var _this = this;
@@ -537,26 +687,10 @@ var FsData = /** @class */ (function () {
         }
         return deferred.promise;
     };
-    FsData.prototype.getListData = function (dataset, datasources) {
-        return __awaiter(this, void 0, void 0, function () {
-            var data;
-            return __generator(this, function (_a) {
-                data = [
-                    { name: 'Berlin', value: '20.1%' },
-                    { name: 'Antwerpen', value: '41.44%' },
-                    { name: 'Geschulgenhaagen', value: '9.3%' },
-                    { name: 'Togo', value: '6%' },
-                ];
-                data = data.sort(function (a, b) { return parseFloat(a.value) > parseFloat(b.value) ? -1 : 1; });
-                return [2 /*return*/, Promise.resolve(data)];
-            });
-        });
-    };
-    FsData.prototype.getData = function (dataset, datasources, fromDate, toDate, translations) {
+    FsData.prototype.getData = function (dataset, datasources, fromDate, toDate) {
         if (fromDate === void 0) { fromDate = ''; }
         if (toDate === void 0) { toDate = ''; }
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             var deferred, datasourceIds, nonMatchingDatasources, sources, requestUrl;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -567,13 +701,13 @@ var FsData = /** @class */ (function () {
                         return [4 /*yield*/, this.getDatasources()];
                     case 1:
                         sources = _a.sent();
-                        datasources.forEach(function (ds) {
-                            var datasourceByName = sources.find(function (s) { return s.name.toLowerCase() === ("" + ds).toLowerCase(); });
+                        sources.forEach(function (ds) {
+                            var datasourceByName = sources.find(function (s) { return s.name.toLowerCase() === (ds.name).toLowerCase(); });
                             if (datasourceByName !== undefined) {
-                                datasourceIds.push(datasourceByName.id);
+                                datasourceIds.push(datasourceByName.datasource);
                             }
                             else {
-                                nonMatchingDatasources.push(ds);
+                                nonMatchingDatasources.push(ds.name);
                             }
                         });
                         if (nonMatchingDatasources.length > 0) {
@@ -582,13 +716,12 @@ var FsData = /** @class */ (function () {
                         if (datasourceIds.length === 0) {
                             datasourceIds.push(0);
                         }
-                        requestUrl = ("" + this._baseUrl + this._dataUrl).replace(/{{datasources}}/g, datasources.join(','));
+                        requestUrl = ("" + this._baseUrl + this._dataUrl).replace(/{{datasources}}/g, datasourceIds.join(',')).replace(/{{type}}/g, dataset);
                         this.$http
                             .get(requestUrl)
                             .then(function (response) {
                             var resp = Array.isArray(response.data) ? response.data[0] : response.data;
-                            var result = _this.transform(dataset, resp, _this._datasources, translations);
-                            deferred.resolve(result);
+                            deferred.resolve(resp);
                         })
                             .catch(function (err) {
                             deferred.reject(err.statusText || 'A error occured while fetching data');
@@ -598,79 +731,9 @@ var FsData = /** @class */ (function () {
             });
         });
     };
-    FsData.prototype.transform = function (dataset, resp, datasources, translations) {
-        if (translations === void 0) { translations = []; }
-        var data = [];
-        var labels = [];
-        var series = [];
-        var chartMap = chartMappings_1.chartMappings[dataset];
-        if (chartMap === undefined) {
-            throw new Error("Chartmapping missing for " + dataset);
-        }
-        var xAxisColumn = chartMap.columns.find(function (m) { return m.xAxis; });
-        resp.datasources.forEach(function (ds) {
-            var dataLabels = ds.data
-                .sort(function (a, b) { return a.day < b.day ? -1 : 1; })
-                .map(function (d) { return d[xAxisColumn.key]; })
-                .filter(function (entry, index, arr) { return labels.indexOf(entry) === -1; });
-            labels.push.apply(labels, dataLabels);
-            var datasource = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
-            var objKeys = Object.keys(ds.data[0]);
-            series.push.apply(series, objKeys.filter(function (key) { return key !== xAxisColumn.key; }).map(function (key) {
-                var overrideSerieName = translations.find(function (tran) { return tran.serieName === key; });
-                var serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
-                return {
-                    title: datasource.id === 0 ? "" + serieName : serieName + " (" + datasource.name + ")",
-                    datasource: datasource,
-                    data: ds.data.map(function (data) { return data[key]; })
-                };
-            }));
-        });
-        var outputSeries = [];
-        var outputData = [];
-        series.forEach(function (serie) {
-            outputSeries.push(serie.title);
-            outputData.push(serie.data);
-        });
-        return {
-            labels: labels,
-            data: outputData,
-            series: outputSeries.sort(function (a, b) { return a - b; }),
-            options: {
-                scales: {
-                    xAxes: [{ gridLines: { display: false } }],
-                    yAxes: [{ gridLines: { display: false } }],
-                }
-            },
-        };
-    };
     return FsData;
 }());
 exports.FsData = FsData;
-
-});
-___scope___.file("chartMappings.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.chartMappings = {
-    calls_per_day: {
-        columns: [
-            {
-                key: 'day',
-                xAxis: true
-            },
-            {
-                key: 'answered',
-                xAxis: false
-            },
-            {
-                key: 'missed',
-                xAxis: false
-            }
-        ]
-    }
-};
 
 });
 });
@@ -721,17 +784,6 @@ module.exports = cssHandler;
 });
 return ___scope___.entry = "index.js";
 });
-FuseBox.global("__awaiter", function(thisArg, _arguments, P, generator) {
-    return new(P || (P = Promise))(function(resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-
-        function step(result) { result.done ? resolve(result.value) : new P(function(resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
-    });
-});
-
 FuseBox.global("__fsbx_decorate", function(localArguments) {
     return function(decorators, target, key, desc) {
         var c = arguments.length,
@@ -760,6 +812,25 @@ FuseBox.global("__fsbx_decorate", function(localArguments) {
 
 FuseBox.global("__metadata", function(k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+});
+
+FuseBox.global("__extends", function(d, b) {
+    for (var p in b)
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+});
+
+FuseBox.global("__awaiter", function(thisArg, _arguments, P, generator) {
+    return new(P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+
+        function step(result) { result.done ? resolve(result.value) : new P(function(resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
 });
 
 FuseBox.global("__generator", function(thisArg, body) {

@@ -1,7 +1,8 @@
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+import { AxisChartWidget } from '../axisChart/axis-chart.component';
 import { Component } from '../../decorators';
-import { FsData, ChartResponse } from '../../services/FsData.service';
-import './line-chart.styles.scss';
+import { FsData } from '../../services/FsData.service';
+import '../axisChart/line-chart.styles.scss';
 
 @Component({
   template: `
@@ -22,24 +23,14 @@ import './line-chart.styles.scss';
     title: '@',
     type: '@',
     segments: '<',
+    fsTranslations: '<'
   },
   controllerAs: 'vm',
 })
-export class LineChartWidget {
-  
-  private type: string;
-  private segments: string[] = ['all_data'];
-  private data: ChartResponse = {
-    data: [],
-    labels: [],
-    series: []
-  }
+export class LineChartWidget extends AxisChartWidget {
 
-  constructor (private $scope: ng.IScope, private FsData: FsData) { }
-
-  async $onInit() {
-    this.data = await this.FsData.getData(this.type, this.segments, '', '', []);
-    this.$scope.$apply();
+  constructor(protected $scope: ng.IScope, protected FsData: FsData) {
+    super($scope, FsData);
   }
 
 }

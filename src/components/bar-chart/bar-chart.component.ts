@@ -1,8 +1,8 @@
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+import { AxisChartWidget } from '../axisChart/axis-chart.component';
 import { Component } from '../../decorators';
-import { FsData, ChartResponse } from '../../services/FsData.service';
-import { FsSeriesTranslation } from '../../services/FsData.service';
-import './bar-chart.styles.scss';
+import { FsData } from '../../services/FsData.service';
+import '../axisChart/bar-chart.styles.scss';
 
 @Component({
   template: `
@@ -23,26 +23,14 @@ import './bar-chart.styles.scss';
     title: '@',
     type: '@',
     segments: '<',
-    fsTranslations: '<',
+    fsTranslations: '<'
   },
   controllerAs: 'vm',
 })
-export class BarChartWidget {
-  
-  private type: string;
-  private segments: string[] = ['all_data'];
-  private fsTranslations: FsSeriesTranslation[] = [];
-  private data: ChartResponse = {
-    data: [],
-    labels: [],
-    series: []
-  }
+export class BarChartWidget extends AxisChartWidget {
 
-  constructor (private $scope: ng.IScope, private FsData: FsData) { }
-
-  async $onInit() {
-    this.data = await this.FsData.getData(this.type, this.segments, '', '', this.fsTranslations);
-    this.$scope.$apply();
+  constructor(protected $scope: ng.IScope, protected FsData: FsData) {
+    super($scope, FsData);
   }
 
 }

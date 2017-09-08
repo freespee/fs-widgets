@@ -1,6 +1,6 @@
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
 import { Component } from '../../decorators';
-import { FsData, ChartResponse } from '../../services/FsData.service';
+import { FsData, FsDataResponse } from '../../services/FsData.service';
 import './single-value.styles.scss';
 
 @Component({
@@ -21,16 +21,25 @@ import './single-value.styles.scss';
 export class SingleValueWidget {
   
   private type: string;
-  private segment: string = 'all_data';
+  private segments: string[] = ['all_data'];
   private value: any;
 
   constructor (private $scope: angular.IScope, private FsData: FsData) { 
 
   }
 
+  private setResponse(value: FsDataResponse): any {
+      this.value = value.datasources[0].data;
+  }
+
   async $onInit() {
-    this.value = await this.FsData.getSingleValue(this.type, this.segment, '', '');
+    let response = await this.FsData.getData(this.type, this.segments, '', '');
+    this.setResponse(response);
     this.$scope.$apply();
+  }
+
+  private getSingleValue(dataset: string, datasources: string[]) {
+    this.value = '1100 calls';
   }
 
 }
