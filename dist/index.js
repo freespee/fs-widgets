@@ -143,7 +143,14 @@ var AxisChartWidget = /** @class */ (function () {
         value.datasources.forEach(function (ds) {
             var dataLabels = ds.data
                 .sort(function (a, b) { return a.name < b.name ? -1 : 1; })
-                .map(function (d) { return d[xAxisColumn.key]; })
+                .map(function (d) {
+                if (d[xAxisColumn.key].length > 15) {
+                    return d[xAxisColumn.key].substr(0, 15) + '...';
+                }
+                else {
+                    return d[xAxisColumn.key];
+                }
+            })
                 .filter(function (entry, index, arr) { return labels.indexOf(entry) === -1; });
             labels.push.apply(labels, dataLabels);
             var datasource = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
@@ -152,7 +159,7 @@ var AxisChartWidget = /** @class */ (function () {
                 var overrideSerieName = translations.find(function (tran) { return tran.serieName === key; });
                 var serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
                 return {
-                    title: datasource.datasource === 0 ? "" + serieName : serieName + " (" + datasource.name + ")",
+                    title: "" + serieName,
                     datasource: datasource,
                     data: ds.data.map(function (data) { return data[key]; })
                 };
@@ -171,7 +178,12 @@ var AxisChartWidget = /** @class */ (function () {
             options: {
                 scales: {
                     xAxes: [{ gridLines: { display: false } }],
-                    yAxes: [{ gridLines: { display: false } }],
+                    yAxes: [
+                        {
+                            gridLines: { display: false },
+                            ticks: { beginAtZero: true }
+                        }
+                    ],
                 }
             }
         };
@@ -444,7 +456,7 @@ var TopListWidget = /** @class */ (function () {
         });
         var outputList = [];
         data.forEach(function (serie) {
-            outputList.push({ 'name': serie[nameColumn.key], 'value': serie[valueColumn.key] });
+            outputList.push({ 'name': serie[nameColumn.key], 'value': +serie[valueColumn.key] });
         });
         this.list = outputList.sort(function (a, b) { return a - b; });
     };
@@ -462,15 +474,6 @@ var TopListWidget = /** @class */ (function () {
                 }
             });
         });
-    };
-    TopListWidget.prototype.getListData = function (dataset, datasources) {
-        var data = [
-            { name: 'Berlin', value: '20.1%' },
-            { name: 'Antwerpen', value: '41.44%' },
-            { name: 'Geschulgenhaagen', value: '9.3%' },
-            { name: 'Togo', value: '6%' }
-        ];
-        this.list = data.sort(function (a, b) { return parseFloat(a.value) > parseFloat(b.value) ? -1 : 1; });
     };
     TopListWidget = __decorate([
         decorators_1.Component({

@@ -46,7 +46,14 @@ protected setResponse(dataset: string, value: FsDataResponse, datasources: Datas
     value.datasources.forEach(ds => {
        let dataLabels = ds.data
          .sort((a, b) => a.name < b.name ? -1 : 1)
-         .map(d => d[xAxisColumn.key])
+         .map(d => {
+           if (d[xAxisColumn.key].length > 15) {
+            return d[xAxisColumn.key].substr(0, 15)+'...';
+           } else {
+             return d[xAxisColumn.key];
+           }
+
+         })
          .filter((entry, index, arr) => labels.indexOf(entry) === -1);
        labels.push(...dataLabels);
 
