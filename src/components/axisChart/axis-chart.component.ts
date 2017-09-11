@@ -79,7 +79,12 @@ protected setResponse(dataset: string, value: FsDataResponse, datasources: Datas
       options: {
         scales: {
           xAxes: [{gridLines: { display:false }}],
-          yAxes: [{gridLines: { display:false }}],
+          yAxes: [
+            {
+              gridLines: { display:false },
+              ticks: { beginAtZero: true}
+            }
+          ],
         }
       }
     };
