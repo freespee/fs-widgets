@@ -6,7 +6,11 @@ export const axisChartMappings = {
         xAxis: true,
       },
       {
-        key: 'val',
+        key: 'Answered',
+        xAxis: false,
+      },
+      {
+        key: 'Missed',
         xAxis: false,
       }
     ]

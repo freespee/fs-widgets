@@ -134,7 +134,12 @@ var AxisChartWidget = /** @class */ (function () {
             throw new Error("Chartmapping missing for " + dataset);
         }
         var xAxisColumn = chartMap.columns.find(function (m) { return m.xAxis; });
-        var yAxisColumn = chartMap.columns.find(function (m) { return !m.xAxis; });
+        var yAxisColumns = [];
+        chartMap.columns.forEach(function (column) {
+            if (column.xAxis === false) {
+                yAxisColumns.push(column);
+            }
+        });
         value.datasources.forEach(function (ds) {
             var dataLabels = ds.data
                 .sort(function (a, b) { return a.name < b.name ? -1 : 1; })
@@ -143,7 +148,7 @@ var AxisChartWidget = /** @class */ (function () {
             labels.push.apply(labels, dataLabels);
             var datasource = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
             var objKeys = Object.keys(ds.data[0]);
-            series.push.apply(series, objKeys.filter(function (key) { return key === yAxisColumn.key; }).map(function (key) {
+            series.push.apply(series, objKeys.filter(function (key) { return yAxisColumns.find(function (m) { return key === m.key; }); }).map(function (key) {
                 var overrideSerieName = translations.find(function (tran) { return tran.serieName === key; });
                 var serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
                 return {
@@ -219,7 +224,11 @@ exports.axisChartMappings = {
                 xAxis: true,
             },
             {
-                key: 'val',
+                key: 'Answered',
+                xAxis: false,
+            },
+            {
+                key: 'Missed',
                 xAxis: false,
             }
         ]
@@ -231,7 +240,11 @@ exports.axisChartMappings = {
                 xAxis: true,
             },
             {
-                key: 'val',
+                key: 'Answered',
+                xAxis: false,
+            },
+            {
+                key: 'Missed',
                 xAxis: false,
             }
         ]
@@ -574,7 +587,7 @@ exports.SingleValueWidget = SingleValueWidget;
 ___scope___.file("components/single-value/single-value.styles.scss", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("components/single-value/single-value.styles.scss", "fs-single-value {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px; }\n  fs-single-value h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-single-value span {\n    font: 400 1.5em/1.8em \"Source Sans Pro\", sans-serif;\n    display: block;\n    text-align: center; }\n\n/*# sourceMappingURL=single-value.styles.scss.map */")
+require("fuse-box-css")("components/single-value/single-value.styles.scss", "fs-single-value {\n  display: block;\n  background: #fff;\n  width: 500px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);\n  border-radius: 2px;\n  flex-direction: column;\n  padding: 20px;\n  margin: 20px; }\n  fs-single-value h3 {\n    font: 400 1em/1.5em \"Source Sans Pro\", sans-serif;\n    color: #777;\n    margin: 0 0 20px 0; }\n  fs-single-value span {\n    font: 400 1.5em/1.8em \"Source Sans Pro\", sans-serif;\n    display: block;\n    text-align: center; }\n\n/*# sourceMappingURL=single-value.styles.scss.map */")
 });
 ___scope___.file("services/FsData.service.js", function(exports, require, module, __filename, __dirname){
 
