@@ -22,7 +22,8 @@ export interface FsSeriesTranslation {
 
 class FsData implements ng.IServiceProvider {
   _customerId: number;
-  _partnerId: number;
+  _fromDate: string = '';
+  _toDate: string = '';
   _baseUrl: string = 'https://analytics.freespee.com';
   _datasourceUrl: string = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
   _dataUrl: string = '/api/widgets/data?type={{type}}&customer_id={{customerId}}';
@@ -30,8 +31,12 @@ class FsData implements ng.IServiceProvider {
   $http: ng.IHttpService;
   $q: ng.IQService;
 
-  set partnerId(partnerId: number) {
-    this._partnerId = partnerId;
+  set fromDate(fromDate: string) {
+    this._fromDate = fromDate;
+  }
+
+  set toDate(toDate: string) {
+    this._toDate = toDate;
   }
 
   set customerId(customerId: number) {
@@ -41,6 +46,7 @@ class FsData implements ng.IServiceProvider {
   set baseUrl(baseUrl: string) {
     this._baseUrl = baseUrl;
   }
+
 
   set datasourceUrl(url: string) {
     this._datasourceUrl = url;
@@ -55,7 +61,9 @@ class FsData implements ng.IServiceProvider {
     this.$q = $q;
 
     this._dataUrl = this._dataUrl
-      .replace(/{{customerId}}/g, this._customerId.toString());
+      .replace(/{{customerId}}/g, this._customerId.toString())
+      .replace(/{{fromDate}}/g, this._fromDate)
+      .replace(/{{toDate}}/g, this._toDate);
     this._datasourceUrl = this._datasourceUrl
       .replace(/{{customerId}}/g, this._customerId.toString());
 

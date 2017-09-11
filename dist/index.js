@@ -636,13 +636,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var FsData = /** @class */ (function () {
     function FsData() {
+        this._fromDate = '';
+        this._toDate = '';
         this._baseUrl = 'https://analytics.freespee.com';
         this._datasourceUrl = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
         this._dataUrl = '/api/widgets/data?type={{type}}&customer_id={{customerId}}';
     }
-    Object.defineProperty(FsData.prototype, "partnerId", {
-        set: function (partnerId) {
-            this._partnerId = partnerId;
+    Object.defineProperty(FsData.prototype, "fromDate", {
+        set: function (fromDate) {
+            this._fromDate = fromDate;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FsData.prototype, "toDate", {
+        set: function (toDate) {
+            this._toDate = toDate;
         },
         enumerable: true,
         configurable: true
@@ -679,7 +688,9 @@ var FsData = /** @class */ (function () {
         this.$http = $http;
         this.$q = $q;
         this._dataUrl = this._dataUrl
-            .replace(/{{customerId}}/g, this._customerId.toString());
+            .replace(/{{customerId}}/g, this._customerId.toString())
+            .replace(/{{fromDate}}/g, this._fromDate)
+            .replace(/{{toDate}}/g, this._toDate);
         this._datasourceUrl = this._datasourceUrl
             .replace(/{{customerId}}/g, this._customerId.toString());
         return {
