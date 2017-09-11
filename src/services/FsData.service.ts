@@ -21,7 +21,7 @@ export interface FsSeriesTranslation {
 }
 
 class FsData implements ng.IServiceProvider {
-  _customerId: number;
+  _customerId: number = 0;
   _fromDate: string = '';
   _toDate: string = '';
   _baseUrl: string = 'https://analytics.freespee.com';

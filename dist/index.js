@@ -636,6 +636,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var FsData = /** @class */ (function () {
     function FsData() {
+        this._customerId = 0;
         this._fromDate = '';
         this._toDate = '';
         this._baseUrl = 'https://analytics.freespee.com';
