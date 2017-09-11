@@ -116,7 +116,6 @@ var AxisChartWidget = /** @class */ (function () {
         this.$scope = $scope;
         this.FsData = FsData;
         this.segments = ['all_data'];
-        this.fsTranslations = [];
         this.data = {
             data: [],
             labels: [],
@@ -124,8 +123,7 @@ var AxisChartWidget = /** @class */ (function () {
             options: []
         };
     }
-    AxisChartWidget.prototype.setResponse = function (dataset, value, translations) {
-        if (translations === void 0) { translations = []; }
+    AxisChartWidget.prototype.setResponse = function (dataset, value) {
         var data = [];
         var labels = [];
         var series = [];
@@ -162,8 +160,8 @@ var AxisChartWidget = /** @class */ (function () {
             labels.push.apply(labels, dataLabels);
             var objKeys = Object.keys(ds.data[0]);
             series.push.apply(series, objKeys.filter(function (key) { return yAxisColumns.find(function (m) { return key === m.key; }); }).map(function (key) {
-                var overrideSerieName = translations.find(function (tran) { return tran.serieName === key; });
-                var serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
+                var overrideSerieName = yAxisColumns.find(function (m) { return key === m.key; }).name;
+                var serieName = overrideSerieName !== undefined ? overrideSerieName : key;
                 return {
                     title: "" + serieName,
                     data: ds.data.map(function (data) { return data[key]; })
@@ -201,7 +199,7 @@ var AxisChartWidget = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '')];
                     case 1:
                         response = _a.sent();
-                        this.setResponse(this.type, response, this.fsTranslations);
+                        this.setResponse(this.type, response);
                         this.$scope.$apply();
                         return [2 /*return*/];
                 }
@@ -272,6 +270,7 @@ exports.axisChartMappings = {
             },
             {
                 key: 'val',
+                name: 'Calls',
                 xAxis: false,
             }
         ]
@@ -284,6 +283,7 @@ exports.axisChartMappings = {
             },
             {
                 key: 'val',
+                name: 'Calls',
                 xAxis: false,
             }
         ]

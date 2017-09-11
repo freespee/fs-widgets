@@ -1,6 +1,6 @@
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
 import { axisChartMappings } from '../../chartMappings';
-import { FsData, FsDataResponse, Datasource } from '../../services/FsData.service';
+import { FsData, FsDataResponse } from '../../services/FsData.service';
 import { FsSeriesTranslation } from '../../services/FsData.service';
 import './bar-chart.styles.scss';
 
@@ -15,7 +15,6 @@ export abstract class AxisChartWidget {
 
   protected type: string;
   protected segments: string[] = ['all_data'];
-  protected fsTranslations: FsSeriesTranslation[] = [];
   protected data: ChartResponse = {
     data: [],
     labels: [],
@@ -27,7 +26,7 @@ export abstract class AxisChartWidget {
 
   }
 
-protected setResponse(dataset: string, value: FsDataResponse, translations: FsSeriesTranslation[] = []): any {
+protected setResponse(dataset: string, value: FsDataResponse): any {
     let data: any[] = [];
     let labels: string[] = [];
     let series: any[] = [];
@@ -65,8 +64,8 @@ protected setResponse(dataset: string, value: FsDataResponse, translations: FsSe
        const objKeys = Object.keys(ds.data[0]);
        series.push(
           ...objKeys.filter(key => yAxisColumns.find(m => key === m.key)).map((key) => {
-             let overrideSerieName = translations.find(tran => tran.serieName === key);
-             let serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
+             let overrideSerieName = yAxisColumns.find(m => key === m.key).name;
+             let serieName = overrideSerieName !== undefined ? overrideSerieName : key;
              return {
                title: `${serieName}`,
                data: ds.data.map((data) => data[key])
@@ -102,7 +101,7 @@ protected setResponse(dataset: string, value: FsDataResponse, translations: FsSe
 
   async $onInit() {
     let response = await this.FsData.getData(this.type, this.segments, '', '');
-    this.setResponse(this.type, response, this.fsTranslations);
+    this.setResponse(this.type, response);
     this.$scope.$apply();
   }
 
