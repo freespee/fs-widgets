@@ -27,7 +27,7 @@ export abstract class AxisChartWidget {
 
   }
 
-  protected setResponse(dataset: string, value: FsDataResponse, datasources: Datasource[], translations: FsSeriesTranslation[] = []): any {
+protected setResponse(dataset: string, value: FsDataResponse, datasources: Datasource[], translations: FsSeriesTranslation[] = []): any {
     let data: any[] = [];
     let labels: string[] = [];
     let series: any[] = [];
@@ -36,7 +36,12 @@ export abstract class AxisChartWidget {
       throw new Error(`Chartmapping missing for ${dataset}`);
     }
     const xAxisColumn = chartMap.columns.find(m => m.xAxis);
-    const yAxisColumn = chartMap.columns.find(m => !m.xAxis);
+    let yAxisColumns: any[] = [];
+    chartMap.columns.forEach(column => {
+      if (column.xAxis === false) {
+        yAxisColumns.push(column);
+      }
+    });
 
     value.datasources.forEach(ds => {
        let dataLabels = ds.data
@@ -48,7 +53,7 @@ export abstract class AxisChartWidget {
        let datasource = <Datasource>datasources.find(systemSource => systemSource.id === ds.datasource);
        const objKeys = Object.keys(ds.data[0]);
        series.push(
-          ...objKeys.filter(key => key === yAxisColumn.key).map((key) => {
+          ...objKeys.filter(key => yAxisColumns.find(m => key === m.key)).map((key) => {
              let overrideSerieName = translations.find(tran => tran.serieName === key);
              let serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
              return {
