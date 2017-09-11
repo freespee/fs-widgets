@@ -142,7 +142,14 @@ var AxisChartWidget = /** @class */ (function () {
         });
         value.datasources.forEach(function (ds) {
             var dataLabels = ds.data
-                .sort(function (a, b) { return a.name < b.name ? -1 : 1; })
+                .sort(function (a, b) {
+                if (chartMap.sort === false) {
+                    return -1;
+                }
+                else {
+                    return a.name < b.name ? -1 : 1;
+                }
+            })
                 .map(function (d) {
                 if (d[xAxisColumn.key].length > 15) {
                     return d[xAxisColumn.key].substr(0, 18) + '...';
@@ -257,6 +264,7 @@ exports.axisChartMappings = {
         ]
     },
     call_length_distribution: {
+        sort: false,
         columns: [
             {
                 key: 'name',

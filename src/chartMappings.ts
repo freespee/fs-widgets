@@ -32,6 +32,7 @@ export const axisChartMappings = {
     ]
   },
   call_length_distribution: {
+      sort: false,
       columns: [
       {
         key: 'name',
