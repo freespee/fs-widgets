@@ -65,24 +65,27 @@ class FsData implements ng.IServiceProvider {
     }
   }
 
-  getDatasources(): ng.IPromise<Datasource[]> {
-    let deferred = this.$q.defer();
+  getDatasources(): Datasource[] {
+    // let deferred = this.$q.defer();
 
-    if (this._datasources !== undefined) {
-      deferred.resolve(this._datasources);
-    } else {
-      this.$http
-        .get(`${this._baseUrl}${this._datasourceUrl}`)
-        .then((response: IHttpPromiseCallbackArg<Datasource[]>) => {
-          this._datasources = <Datasource[]>response.data;
-          deferred.resolve(this._datasources);
-        })
-        .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
-          deferred.reject(err.statusText || 'A error occured while fetching datasources');
-        });
-    }
+    // if (this._datasources !== undefined) {
+    //   deferred.resolve(this._datasources);
+    // } else {
+    //   this.$http
+    //     .get(`${this._baseUrl}${this._datasourceUrl}`)
+    //     .then((response: IHttpPromiseCallbackArg<Datasource[]>) => {
+    //       this._datasources = <Datasource[]>response.data;
+    //       deferred.resolve(this._datasources);
+    //     })
+    //     .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
+    //       deferred.reject(err.statusText || 'A error occured while fetching datasources');
+    //     });
+    // }
 
-    return deferred.promise;
+    // return deferred.promise;
+
+    //return this for now as datasources/segmenting filter isn't supported yet
+    return [{"datasource":0,"name":"Everything"}];
   }
 
   async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = ''): Promise<any> {

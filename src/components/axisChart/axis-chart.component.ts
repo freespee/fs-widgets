@@ -27,7 +27,7 @@ export abstract class AxisChartWidget {
 
   }
 
-protected setResponse(dataset: string, value: FsDataResponse, datasources: Datasource[], translations: FsSeriesTranslation[] = []): any {
+protected setResponse(dataset: string, value: FsDataResponse, translations: FsSeriesTranslation[] = []): any {
     let data: any[] = [];
     let labels: string[] = [];
     let series: any[] = [];
@@ -56,7 +56,6 @@ protected setResponse(dataset: string, value: FsDataResponse, datasources: Datas
          .filter((entry, index, arr) => labels.indexOf(entry) === -1);
        labels.push(...dataLabels);
 
-       let datasource = <Datasource>datasources.find(systemSource => systemSource.id === ds.datasource);
        const objKeys = Object.keys(ds.data[0]);
        series.push(
           ...objKeys.filter(key => yAxisColumns.find(m => key === m.key)).map((key) => {
@@ -64,7 +63,6 @@ protected setResponse(dataset: string, value: FsDataResponse, datasources: Datas
              let serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
              return {
                title: `${serieName}`,
-               datasource: datasource,
                data: ds.data.map((data) => data[key])
              }
           })
@@ -98,8 +96,7 @@ protected setResponse(dataset: string, value: FsDataResponse, datasources: Datas
 
   async $onInit() {
     let response = await this.FsData.getData(this.type, this.segments, '', '');
-    let datasources = await this.FsData.getDatasources();
-    this.setResponse(this.type, response, datasources, this.fsTranslations);
+    this.setResponse(this.type, response, this.fsTranslations);
     this.$scope.$apply();
   }
 
