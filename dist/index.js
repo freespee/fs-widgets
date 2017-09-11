@@ -638,7 +638,7 @@ var FsData = /** @class */ (function () {
     function FsData() {
         this._baseUrl = 'https://analytics.freespee.com';
         this._datasourceUrl = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
-        this._dataUrl = '/api/widgets/content?type={{type}}&customer_id={{customerId}}';
+        this._dataUrl = '/api/widgets/data?type={{type}}&customer_id={{customerId}}';
     }
     Object.defineProperty(FsData.prototype, "partnerId", {
         set: function (partnerId) {
