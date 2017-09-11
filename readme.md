@@ -4,11 +4,7 @@
 ### Get started
 
 #### 1. Install
-```bash
-npm install fs-widgets
-```
-
- Or clone via git and use dist/index.js
+Clone via git and use dist/index.js
 
 ```bash
 git clone https://github.com/freespee/fs-widgets
