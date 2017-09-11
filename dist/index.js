@@ -124,7 +124,7 @@ var AxisChartWidget = /** @class */ (function () {
             options: []
         };
     }
-    AxisChartWidget.prototype.setResponse = function (dataset, value, datasources, translations) {
+    AxisChartWidget.prototype.setResponse = function (dataset, value, translations) {
         if (translations === void 0) { translations = []; }
         var data = [];
         var labels = [];
@@ -145,7 +145,7 @@ var AxisChartWidget = /** @class */ (function () {
                 .sort(function (a, b) { return a.name < b.name ? -1 : 1; })
                 .map(function (d) {
                 if (d[xAxisColumn.key].length > 15) {
-                    return d[xAxisColumn.key].substr(0, 15) + '...';
+                    return d[xAxisColumn.key].substr(0, 18) + '...';
                 }
                 else {
                     return d[xAxisColumn.key];
@@ -153,14 +153,12 @@ var AxisChartWidget = /** @class */ (function () {
             })
                 .filter(function (entry, index, arr) { return labels.indexOf(entry) === -1; });
             labels.push.apply(labels, dataLabels);
-            var datasource = datasources.find(function (systemSource) { return systemSource.id === ds.datasource; });
             var objKeys = Object.keys(ds.data[0]);
             series.push.apply(series, objKeys.filter(function (key) { return yAxisColumns.find(function (m) { return key === m.key; }); }).map(function (key) {
                 var overrideSerieName = translations.find(function (tran) { return tran.serieName === key; });
                 var serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
                 return {
                     title: "" + serieName,
-                    datasource: datasource,
                     data: ds.data.map(function (data) { return data[key]; })
                 };
             }));
@@ -190,16 +188,13 @@ var AxisChartWidget = /** @class */ (function () {
     };
     AxisChartWidget.prototype.$onInit = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var response, datasources;
+            var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '')];
                     case 1:
                         response = _a.sent();
-                        return [4 /*yield*/, this.FsData.getDatasources()];
-                    case 2:
-                        datasources = _a.sent();
-                        this.setResponse(this.type, response, datasources, this.fsTranslations);
+                        this.setResponse(this.type, response, this.fsTranslations);
                         this.$scope.$apply();
                         return [2 /*return*/];
                 }
@@ -685,23 +680,23 @@ var FsData = /** @class */ (function () {
         };
     };
     FsData.prototype.getDatasources = function () {
-        var _this = this;
-        var deferred = this.$q.defer();
-        if (this._datasources !== undefined) {
-            deferred.resolve(this._datasources);
-        }
-        else {
-            this.$http
-                .get("" + this._baseUrl + this._datasourceUrl)
-                .then(function (response) {
-                _this._datasources = response.data;
-                deferred.resolve(_this._datasources);
-            })
-                .catch(function (err) {
-                deferred.reject(err.statusText || 'A error occured while fetching datasources');
-            });
-        }
-        return deferred.promise;
+        // let deferred = this.$q.defer();
+        // if (this._datasources !== undefined) {
+        //   deferred.resolve(this._datasources);
+        // } else {
+        //   this.$http
+        //     .get(`${this._baseUrl}${this._datasourceUrl}`)
+        //     .then((response: IHttpPromiseCallbackArg<Datasource[]>) => {
+        //       this._datasources = <Datasource[]>response.data;
+        //       deferred.resolve(this._datasources);
+        //     })
+        //     .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
+        //       deferred.reject(err.statusText || 'A error occured while fetching datasources');
+        //     });
+        // }
+        // return deferred.promise;
+        //return this for now as datasources/segmenting filter isn't supported yet
+        return [{ "datasource": 0, "name": "Everything" }];
     };
     FsData.prototype.getData = function (dataset, datasources, fromDate, toDate) {
         if (fromDate === void 0) { fromDate = ''; }
