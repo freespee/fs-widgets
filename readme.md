@@ -68,6 +68,21 @@ Translations to the series name can be configure via ***translations***. In the 
   </fs-line-chart>
 ```
 
+##### Available widget types
 
+##### Bar/line charts:
+* call_length_distribution
+* calls_per_day
+* calls_top_attributions
+* daily_call_distribution
 
+##### Top lists:
+* geographic_origin
+* top_customers_by_calls
 
+##### Single values:
+* average_calls_per_user
+* call_durations
+* call_totals
+* missed_calls
+* unique_callers
