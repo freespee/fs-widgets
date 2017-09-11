@@ -25,7 +25,7 @@ class FsData implements ng.IServiceProvider {
   _partnerId: number;
   _baseUrl: string = 'https://analytics.freespee.com';
   _datasourceUrl: string = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
-  _dataUrl: string = '/api/widgets/content?type={{type}}&customer_id={{customerId}}';
+  _dataUrl: string = '/api/widgets/data?type={{type}}&customer_id={{customerId}}';
   _datasources: Datasource[];
   $http: ng.IHttpService;
   $q: ng.IQService;
