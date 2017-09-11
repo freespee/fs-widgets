@@ -32,14 +32,15 @@ export const axisChartMappings = {
     ]
   },
   call_length_distribution: {
-      sort: false,
-      columns: [
+    sort: false,
+    columns: [
       {
         key: 'name',
         xAxis: true,
       },
       {
         key: 'val',
+        name: 'Calls',
         xAxis: false,
       }
     ]
@@ -52,6 +53,7 @@ export const axisChartMappings = {
       },
       {
         key: 'val',
+        name: 'Calls',
         xAxis: false,
       }
     ]
