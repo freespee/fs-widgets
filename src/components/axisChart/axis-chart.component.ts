@@ -48,11 +48,10 @@ protected setResponse(dataset: string, value: FsDataResponse, datasources: Datas
          .sort((a, b) => a.name < b.name ? -1 : 1)
          .map(d => {
            if (d[xAxisColumn.key].length > 15) {
-            return d[xAxisColumn.key].substr(0, 15)+'...';
+            return d[xAxisColumn.key].substr(0, 18)+'...';
            } else {
              return d[xAxisColumn.key];
            }
-
          })
          .filter((entry, index, arr) => labels.indexOf(entry) === -1);
        labels.push(...dataLabels);
@@ -89,7 +88,7 @@ protected setResponse(dataset: string, value: FsDataResponse, datasources: Datas
           yAxes: [
             {
               gridLines: { display:false },
-              ticks: { beginAtZero: true}
+              ticks: { beginAtZero: true }
             }
           ],
         }
