@@ -61,7 +61,7 @@ export class TopListWidget {
 
     let outputList: any[] = [];
     data.forEach(serie => {
-      outputList.push({'name': serie[nameColumn.key], 'value': serie[valueColumn.key]});
+      outputList.push({'name': serie[nameColumn.key], 'value': +serie[valueColumn.key]});
     });
 
     this.list = outputList.sort((a, b) => a - b)
@@ -71,17 +71,6 @@ export class TopListWidget {
     let response = await this.FsData.getData(this.type, this.segments, '', '');
     this.setResponse(this.type, response);
     this.$scope.$apply();
-  }
-
-  private getListData(dataset: string, datasources: string[]) {
-    let data: ToplistData[] = [
-      {name: 'Berlin', value: '20.1%'},
-      {name: 'Antwerpen', value: '41.44%'},
-      {name: 'Geschulgenhaagen', value: '9.3%'},
-      {name: 'Togo', value: '6%'}
-    ];
-
-    this.list = data.sort((a, b) => parseFloat(a.value) > parseFloat(b.value) ? -1 : 1);
   }
 
 }
