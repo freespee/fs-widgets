@@ -57,7 +57,7 @@ protected setResponse(dataset: string, value: FsDataResponse, datasources: Datas
              let overrideSerieName = translations.find(tran => tran.serieName === key);
              let serieName = overrideSerieName !== undefined ? overrideSerieName.translation : key;
              return {
-               title: datasource.datasource === 0 ? `${serieName}` : `${serieName} (${datasource.name})`,
+               title: `${serieName}`,
                datasource: datasource,
                data: ds.data.map((data) => data[key])
              }
