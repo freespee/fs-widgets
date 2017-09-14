@@ -22,6 +22,8 @@ import '../axisChart/line-chart.styles.scss';
   bindings: {
     title: '@',
     type: '@',
+    fromDate: '@',
+    toDate: '@',
     segments: '<',
     fsTranslations: '<'
   },

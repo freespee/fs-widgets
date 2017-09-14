@@ -22,22 +22,12 @@ export interface FsSeriesTranslation {
 
 class FsData implements ng.IServiceProvider {
   _customerId: number = 0;
-  _fromDate: string = '';
-  _toDate: string = '';
   _baseUrl: string = 'https://analytics.freespee.com';
   _datasourceUrl: string = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
   _dataUrl: string = '/api/widgets/data?type={{type}}&customer_id={{customerId}}';
   _datasources: Datasource[];
   $http: ng.IHttpService;
   $q: ng.IQService;
-
-  set fromDate(fromDate: string) {
-    this._fromDate = fromDate;
-  }
-
-  set toDate(toDate: string) {
-    this._toDate = toDate;
-  }
 
   set customerId(customerId: number) {
     this._customerId = customerId;
@@ -61,15 +51,13 @@ class FsData implements ng.IServiceProvider {
     this.$q = $q;
 
     this._dataUrl = this._dataUrl
-      .replace(/{{customerId}}/g, this._customerId.toString())
-      .replace(/{{fromDate}}/g, this._fromDate)
-      .replace(/{{toDate}}/g, this._toDate);
+      .replace(/{{customerId}}/g, this._customerId.toString());
     this._datasourceUrl = this._datasourceUrl
       .replace(/{{customerId}}/g, this._customerId.toString());
 
     return {
       getDatasources: this.getDatasources.bind(this),
-      getData: this.getData.bind(this)
+      getData: this.getData.bind(this),
     }
   }
 
@@ -96,6 +84,12 @@ class FsData implements ng.IServiceProvider {
     return [{"datasource":0,"name":"Everything"}];
   }
 
+  appendDate(orig: string, fromDate: string, toDate: string): string {
+    return orig
+    .replace(/{{fromDate}}/g, fromDate)
+    .replace(/{{toDate}}/g, toDate);
+  }
+
   async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = ''): Promise<any> {
     let deferred = this.$q.defer();
     let datasourceIds: number[] = [];
@@ -119,7 +113,13 @@ class FsData implements ng.IServiceProvider {
       datasourceIds.push(0);
     }
 
-    let requestUrl = `${this._baseUrl}${this._dataUrl}`.replace(/{{datasources}}/g, datasourceIds.join(',')).replace(/{{type}}/g, dataset);
+    let requestUrl = `${this._baseUrl}${this._dataUrl}`
+      .replace(/{{datasources}}/g, datasourceIds
+          .join(','))
+          .replace(/{{type}}/g, dataset)
+          .replace(/{{fromDate}}/g, fromDate)
+          .replace(/{{toDate}}/g, toDate);
+
     this.$http
       .get(requestUrl)
       .then((response: IHttpPromiseCallbackArg<FsDataResponse>) => {

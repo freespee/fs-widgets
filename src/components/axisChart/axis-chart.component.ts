@@ -21,6 +21,8 @@ export abstract class AxisChartWidget {
     series: [],
     options: []
   };
+  protected fromDate: string;
+  protected toDate: string;
 
   constructor(protected $scope: ng.IScope, protected FsData: FsData) {
 
@@ -99,8 +101,8 @@ protected setResponse(dataset: string, value: FsDataResponse): any {
     };
   }
 
-  async $onInit() {
-    let response = await this.FsData.getData(this.type, this.segments, '', '');
+  async $onChanges() {
+    let response = await this.FsData.getData(this.type, this.segments, this.fromDate, this.toDate);
     this.setResponse(this.type, response);
     this.$scope.$apply();
   }
