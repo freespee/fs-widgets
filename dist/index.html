@@ -29,11 +29,13 @@
     </style>
     <link href=“https://fonts.googleapis.com/css?family=Source+Sans+Pro” rel=“stylesheet”>
   </head>
-  <body ng-controller="MyCtrl">
+  <body ng-controller="FsCtrl as ctrl">
     <div class="container">
       <fs-line-chart
               title="Calls per day"
               type="calls_per_day"
+              from-date="{{ctrl.fromDate}}"
+              to-date="{{ctrl.toDate}}"
       ></fs-line-chart>
       <fs-line-chart
               title="Daily call distribution"
