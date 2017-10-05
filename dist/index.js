@@ -58,8 +58,6 @@ var LineChartWidget = /** @class */ (function (_super) {
             bindings: {
                 title: '@',
                 type: '@',
-                fromDate: '@',
-                toDate: '@',
                 segments: '<',
                 fsTranslations: '<'
             },
@@ -193,12 +191,12 @@ var AxisChartWidget = /** @class */ (function () {
             }
         };
     };
-    AxisChartWidget.prototype.$onChanges = function () {
+    AxisChartWidget.prototype.$onInit = function () {
         return __awaiter(this, void 0, void 0, function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.FsData.getData(this.type, this.segments, this.fromDate, this.toDate)];
+                    case 0: return [4 /*yield*/, this.FsData.getData(this.type, this.segments, '', '')];
                     case 1:
                         response = _a.sent();
                         this.setResponse(this.type, response);
@@ -379,8 +377,6 @@ var BarChartWidget = /** @class */ (function (_super) {
             bindings: {
                 title: '@',
                 type: '@',
-                fromDate: '@',
-                toDate: '@',
                 segments: '<',
                 fsTranslations: '<'
             },
@@ -641,10 +637,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var FsData = /** @class */ (function () {
     function FsData() {
         this._customerId = 0;
+        this._fromDate = '';
+        this._toDate = '';
         this._baseUrl = 'https://analytics.freespee.com';
-        this._datasourceUrl = '/api/widgets/datasources';
-        this._dataUrl = '/api/widgets/data';
+        this._datasourceUrl = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
+        this._dataUrl = '/api/widgets/data?type={{type}}&customer_id={{customerId}}';
     }
+    Object.defineProperty(FsData.prototype, "fromDate", {
+        set: function (fromDate) {
+            this._fromDate = fromDate;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FsData.prototype, "toDate", {
+        set: function (toDate) {
+            this._toDate = toDate;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(FsData.prototype, "customerId", {
         set: function (customerId) {
             this._customerId = customerId;
@@ -676,6 +688,12 @@ var FsData = /** @class */ (function () {
     FsData.prototype.$get = function ($http, $q) {
         this.$http = $http;
         this.$q = $q;
+        this._dataUrl = this._dataUrl
+            .replace(/{{customerId}}/g, this._customerId.toString())
+            .replace(/{{fromDate}}/g, this._fromDate)
+            .replace(/{{toDate}}/g, this._toDate);
+        this._datasourceUrl = this._datasourceUrl
+            .replace(/{{customerId}}/g, this._customerId.toString());
         return {
             getDatasources: this.getDatasources.bind(this),
             getData: this.getData.bind(this)
@@ -701,8 +719,10 @@ var FsData = /** @class */ (function () {
         return [{ "datasource": 0, "name": "Everything" }];
     };
     FsData.prototype.getData = function (dataset, datasources, fromDate, toDate) {
+        if (fromDate === void 0) { fromDate = ''; }
+        if (toDate === void 0) { toDate = ''; }
         return __awaiter(this, void 0, void 0, function () {
-            var deferred, datasourceIds, nonMatchingDatasources, sources, dataUrl, config;
+            var deferred, datasourceIds, nonMatchingDatasources, sources, requestUrl;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -727,18 +747,9 @@ var FsData = /** @class */ (function () {
                         if (datasourceIds.length === 0) {
                             datasourceIds.push(0);
                         }
-                        dataUrl = this._baseUrl + this._dataUrl;
-                        config = {
-                            params: {
-                                "customer_id": this._customerId,
-                                "datasources": datasourceIds.join(','),
-                                "type": dataset,
-                                "from_date": fromDate || null,
-                                "to_date": toDate || null,
-                            }
-                        };
+                        requestUrl = ("" + this._baseUrl + this._dataUrl).replace(/{{datasources}}/g, datasourceIds.join(',')).replace(/{{type}}/g, dataset);
                         this.$http
-                            .get(dataUrl, config)
+                            .get(requestUrl)
                             .then(function (response) {
                             var resp = Array.isArray(response.data) ? response.data[0] : response.data;
                             deferred.resolve(resp);
