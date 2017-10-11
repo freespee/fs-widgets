@@ -12,6 +12,9 @@
     "freespee",
     "widgets"
   ],
+  "engines": {
+    "node": "<=8.0.0"
+  },
   "author": "Chaaya, Elias & Rashidi, Damoon",
   "license": "MIT",
   "dependencies": {

@@ -1,4 +1,4 @@
-import { IHttpPromiseCallbackArg } from "@types/angular";
+import { IHttpResponse } from "@types/angular";
 
 export interface Datasource {
   datasource: number;
@@ -22,22 +22,12 @@ export interface FsSeriesTranslation {
 
 class FsData implements ng.IServiceProvider {
   _customerId: number = 0;
-  _fromDate: string = '';
-  _toDate: string = '';
   _baseUrl: string = 'https://analytics.freespee.com';
-  _datasourceUrl: string = '/api/widgets/datasources?partner_id={{partnerId}}&customer_id={{customerId}}';
-  _dataUrl: string = '/api/widgets/data?type={{type}}&customer_id={{customerId}}';
+  _datasourceUrl: string = '/api/widgets/datasources';
+  _dataUrl: string = '/api/widgets/data';
   _datasources: Datasource[];
   $http: ng.IHttpService;
   $q: ng.IQService;
-
-  set fromDate(fromDate: string) {
-    this._fromDate = fromDate;
-  }
-
-  set toDate(toDate: string) {
-    this._toDate = toDate;
-  }
 
   set customerId(customerId: number) {
     this._customerId = customerId;
@@ -46,7 +36,6 @@ class FsData implements ng.IServiceProvider {
   set baseUrl(baseUrl: string) {
     this._baseUrl = baseUrl;
   }
-
 
   set datasourceUrl(url: string) {
     this._datasourceUrl = url;
@@ -59,13 +48,6 @@ class FsData implements ng.IServiceProvider {
   $get($http: ng.IHttpService, $q: ng.IQService) {
     this.$http = $http;
     this.$q = $q;
-
-    this._dataUrl = this._dataUrl
-      .replace(/{{customerId}}/g, this._customerId.toString())
-      .replace(/{{fromDate}}/g, this._fromDate)
-      .replace(/{{toDate}}/g, this._toDate);
-    this._datasourceUrl = this._datasourceUrl
-      .replace(/{{customerId}}/g, this._customerId.toString());
 
     return {
       getDatasources: this.getDatasources.bind(this),
@@ -96,7 +78,7 @@ class FsData implements ng.IServiceProvider {
     return [{"datasource":0,"name":"Everything"}];
   }
 
-  async getData(dataset: string, datasources: string[], fromDate: string = '', toDate: string = ''): Promise<any> {
+  async getData(dataset: string, datasources: string[], fromDate: string, toDate: string): Promise<any> {
     let deferred = this.$q.defer();
     let datasourceIds: number[] = [];
     let nonMatchingDatasources: string[] = [];
@@ -119,14 +101,24 @@ class FsData implements ng.IServiceProvider {
       datasourceIds.push(0);
     }
 
-    let requestUrl = `${this._baseUrl}${this._dataUrl}`.replace(/{{datasources}}/g, datasourceIds.join(',')).replace(/{{type}}/g, dataset);
+    var dataUrl = this._baseUrl + this._dataUrl;
+    var config = {
+      params: {
+        "customer_id": this._customerId,
+        "datasources": datasourceIds.join(','),
+        "type": dataset,
+        "from_date": fromDate || null,
+        "to_date": toDate || null,
+      }
+    };
+
     this.$http
-      .get(requestUrl)
-      .then((response: IHttpPromiseCallbackArg<FsDataResponse>) => {
+      .get(dataUrl, config)
+      .then((response: IHttpResponse<FsDataResponse>) => {
         let resp = Array.isArray(response.data) ? response.data[0] : response.data;
         deferred.resolve(resp);
       })
-      .catch((err: IHttpPromiseCallbackArg<Datasource[]>) => {
+      .catch((err: IHttpResponse<Datasource[]>) => {
         deferred.reject(err.statusText || 'A error occured while fetching data');
       });
 

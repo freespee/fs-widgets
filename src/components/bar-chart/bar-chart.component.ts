@@ -22,6 +22,8 @@ import '../axisChart/bar-chart.styles.scss';
   bindings: {
     title: '@',
     type: '@',
+    fromDate: '@',
+    toDate: '@',
     segments: '<',
     fsTranslations: '<'
   },
