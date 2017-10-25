@@ -2,6 +2,7 @@
 import { AxisChartWidget } from '../axisChart/axis-chart.component';
 import { Component } from '../../decorators';
 import { FsData } from '../../services/FsData.service';
+import { DataLabelTransformer } from "../../services/DataLabelTransformer.service";
 import '../axisChart/bar-chart.styles.scss';
 
 @Component({
@@ -31,8 +32,12 @@ import '../axisChart/bar-chart.styles.scss';
 })
 export class BarChartWidget extends AxisChartWidget {
 
-  constructor(protected $scope: ng.IScope, protected FsData: FsData) {
-    super($scope, FsData);
+  constructor(
+      protected $scope: ng.IScope,
+      protected FsData: FsData,
+      protected DataLabelTransformer: DataLabelTransformer
+  ) {
+    super($scope, FsData, DataLabelTransformer);
   }
 
 }

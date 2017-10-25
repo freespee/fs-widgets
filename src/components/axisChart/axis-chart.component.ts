@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
 import { axisChartMappings } from '../../chartMappings';
 import { FsData, FsDataResponse } from '../../services/FsData.service';
-import { FsSeriesTranslation } from '../../services/FsData.service';
+import { DataLabelTransformer } from "../../services/DataLabelTransformer.service";
 import './bar-chart.styles.scss';
 
 interface ChartResponse {
@@ -24,8 +24,11 @@ export abstract class AxisChartWidget {
   protected fromDate: string;
   protected toDate: string;
 
-  constructor(protected $scope: ng.IScope, protected FsData: FsData) {
-
+  constructor(
+      protected $scope: ng.IScope,
+      protected FsData: FsData,
+      protected DataLabelTransformer: DataLabelTransformer
+  ) {
   }
 
 protected setResponse(dataset: string, value: FsDataResponse): any {
@@ -60,7 +63,8 @@ protected setResponse(dataset: string, value: FsDataResponse): any {
              return d[xAxisColumn.key];
            }
          })
-         .filter((entry, index, arr) => labels.indexOf(entry) === -1);
+         .filter((entry, index, arr) => labels.indexOf(entry) === -1)
+         .map(this.DataLabelTransformer.transform);
        labels.push(...dataLabels);
 
        const objKeys = Object.keys(ds.data[0]);
