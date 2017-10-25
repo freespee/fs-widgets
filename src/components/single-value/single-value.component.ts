@@ -14,7 +14,9 @@ import './single-value.styles.scss';
   bindings: {
     title: '@',
     type: '@',
-    segment: '@'
+    segment: '@',
+    fromDate: '@',
+    toDate: '@'
   },
   controllerAs: 'vm',
 })
@@ -23,6 +25,8 @@ export class SingleValueWidget {
   private type: string;
   private segments: string[] = ['all_data'];
   private value: any;
+  private fromDate: string;
+  private toDate: string;
 
   constructor (private $scope: angular.IScope, private FsData: FsData) { 
 
@@ -32,8 +36,8 @@ export class SingleValueWidget {
       this.value = value.datasources[0].data;
   }
 
-  async $onInit() {
-    let response = await this.FsData.getData(this.type, this.segments, '', '');
+  async $onChanges() {
+    let response = await this.FsData.getData(this.type, this.segments, this.fromDate, this.toDate);
     this.setResponse(response);
     this.$scope.$apply();
   }
