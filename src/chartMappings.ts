@@ -1,5 +1,10 @@
+import * as moment from 'moment'
+
 export const axisChartMappings = {
   calls_per_day: {
+    parse: function(options) {
+      this.name = moment(this.name, 'YYYY-MM-DD').format(options.dateFormat);
+    },
     columns: [
       {
         key: 'name',

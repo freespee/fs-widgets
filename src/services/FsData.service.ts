@@ -1,4 +1,5 @@
 import { IHttpResponse } from "@types/angular";
+import { axisChartMappings } from '../chartMappings';
 
 export interface Datasource {
   datasource: number;
@@ -25,6 +26,7 @@ class FsData implements ng.IServiceProvider {
   _baseUrl: string = 'https://analytics.freespee.com';
   _datasourceUrl: string = '/api/widgets/datasources';
   _dataUrl: string = '/api/widgets/data';
+  _dateFormat: string = 'YYYY-MM-DD';
   _datasources: Datasource[];
   $http: ng.IHttpService;
   $q: ng.IQService;
@@ -43,6 +45,10 @@ class FsData implements ng.IServiceProvider {
 
   set dataUrl(url: string) {
     this._dataUrl = url;
+  }
+
+  set dateFormat(dateFormat: string) {
+    this._dateFormat = dateFormat;
   }
 
   $get($http: ng.IHttpService, $q: ng.IQService) {
@@ -76,6 +82,16 @@ class FsData implements ng.IServiceProvider {
 
     //return this for now as datasources/segmenting filter isn't supported yet
     return [{"datasource":0,"name":"Everything"}];
+  }
+
+  parse(resp: FsDataResponse): void {
+    const datasetChartMapping = axisChartMappings[resp.dataset];
+    const hasParserFunc =  datasetChartMapping && datasetChartMapping.hasOwnProperty('parse');
+    if (hasParserFunc) {
+      resp.datasources.forEach(datasource => datasource.data.forEach(data => {
+        datasetChartMapping.parse.apply(data, [{ dateFormat: this._dateFormat }])
+      }))
+    }
   }
 
   async getData(dataset: string, datasources: string[], fromDate: string, toDate: string): Promise<any> {
@@ -116,6 +132,7 @@ class FsData implements ng.IServiceProvider {
       .get(dataUrl, config)
       .then((response: IHttpResponse<FsDataResponse>) => {
         let resp = Array.isArray(response.data) ? response.data[0] : response.data;
+        this.parse(resp)
         deferred.resolve(resp);
       })
       .catch((err: IHttpResponse<Datasource[]>) => {
