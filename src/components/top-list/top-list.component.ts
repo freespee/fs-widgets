@@ -35,6 +35,8 @@ interface ToplistData {
     limit: '@',
     type: '@',
     segments: '<',
+    fromDate: '@',
+    toDate: '@'
   },
   controllerAs: 'vm',
 })
@@ -43,6 +45,8 @@ export class TopListWidget {
   private type: string;
   private segments: string[] = ['all_data'];
   private list: ToplistData[] = [];
+  private fromDate: string;
+  private toDate: string;
 
   constructor (
       private $scope: ng.IScope,
@@ -73,8 +77,8 @@ export class TopListWidget {
     this.list = outputList.sort((a, b) => a - b)
   }
 
-  async $onInit() {
-    let response = await this.FsData.getData(this.type, this.segments, '', '');
+  async $onChanges() {
+    let response = await this.FsData.getData(this.type, this.segments, this.fromDate, this.toDate);
     this.setResponse(this.type, response);
     this.$scope.$apply();
   }
