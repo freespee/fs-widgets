@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
-import { axisChartMappings } from '../../chartMappings';
 import { FsData, FsDataResponse } from '../../services/FsData.service';
-import { FsSeriesTranslation } from '../../services/FsData.service';
+import { DataLabelTransformer } from "../../services/DataLabelTransformer.service";
+import { ChartMapping } from "../../services/ChartMapping.service";
 import './bar-chart.styles.scss';
 
 interface ChartResponse {
@@ -24,15 +24,19 @@ export abstract class AxisChartWidget {
   protected fromDate: string;
   protected toDate: string;
 
-  constructor(protected $scope: ng.IScope, protected FsData: FsData) {
-
+  constructor(
+      protected $scope: ng.IScope,
+      protected FsData: FsData,
+      protected DataLabelTransformer: DataLabelTransformer,
+      protected ChartMapping: ChartMapping
+  ) {
   }
 
 protected setResponse(dataset: string, value: FsDataResponse): any {
     let data: any[] = [];
     let labels: string[] = [];
     let series: any[] = [];
-    const chartMap = axisChartMappings[dataset];
+    const chartMap = this.ChartMapping.getMappingForType(dataset);
     if (chartMap === undefined) {
       throw new Error(`Chartmapping missing for ${dataset}`);
     }
@@ -60,7 +64,8 @@ protected setResponse(dataset: string, value: FsDataResponse): any {
              return d[xAxisColumn.key];
            }
          })
-         .filter((entry, index, arr) => labels.indexOf(entry) === -1);
+         .filter((entry, index, arr) => labels.indexOf(entry) === -1)
+         .map(this.DataLabelTransformer.transform);
        labels.push(...dataLabels);
 
        const objKeys = Object.keys(ds.data[0]);
