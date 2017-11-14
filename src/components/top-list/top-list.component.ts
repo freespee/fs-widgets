@@ -2,6 +2,7 @@
 import { listChartMappings } from '../../chartMappings';
 import { Component } from '../../decorators';
 import { FsData, FsDataResponse } from '../../services/FsData.service';
+import { ChartMapping } from "../../services/ChartMapping.service";
 import './top-list.styles.scss';
 
 interface ToplistData {
@@ -14,12 +15,12 @@ interface ToplistData {
     <h3>{{vm.title}}</h3>
     <table cell-spacing="0" cell-padding="0">
       <thead>
-        <th>Name</th>
-        <th>Value</th>
+        <th>{{vm.keyTitle}}</th>
+        <th>{{vm.valueTitle}}</th>
       </thead>
       <tbody>
         <tr
-          ng-repeat="item in vm.list | orderBy:'value':true | limitTo: 4"
+          ng-repeat="item in vm.list | orderBy:'value':true | limitTo: vm.limit"
         >
           <td ng-bind="item.name"></td>
           <td ng-bind="item.value"></td>
@@ -29,6 +30,9 @@ interface ToplistData {
   `,
   bindings: {
     title: '@',
+    keyTitle: '@',
+    valueTitle: '@',
+    limit: '@',
     type: '@',
     segments: '<',
   },
@@ -40,13 +44,15 @@ export class TopListWidget {
   private segments: string[] = ['all_data'];
   private list: ToplistData[] = [];
 
-  constructor (private $scope: ng.IScope, private FsData: FsData) {
-
-  }
+  constructor (
+      private $scope: ng.IScope,
+      private FsData: FsData,
+      private ChartMapping: ChartMapping
+  ) {}
 
   private setResponse(dataset: string, value: FsDataResponse): any {
     let data: any[] = [];
-    const chartMap = listChartMappings[dataset];
+    const chartMap = this.ChartMapping.getMappingForType(dataset);
     if (chartMap === undefined) {
       throw new Error(`Chartmapping missing for ${dataset}`);
     }

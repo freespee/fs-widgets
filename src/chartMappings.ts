@@ -1,4 +1,4 @@
-export const axisChartMappings = {
+export const chartMappings = {
   calls_per_day: {
     columns: [
       {
@@ -8,10 +8,12 @@ export const axisChartMappings = {
       {
         key: 'Answered',
         xAxis: false,
+        name: "Answered Calls"
       },
       {
         key: 'Missed',
         xAxis: false,
+        name: "Missed Calls"
       }
     ]
   },
@@ -57,10 +59,7 @@ export const axisChartMappings = {
         xAxis: false,
       }
     ]
-  }
-};
-
-export const listChartMappings = {
+  },
   top_customers_by_calls: {
     columns: [
       {

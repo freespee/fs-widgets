@@ -3,6 +3,7 @@ import { AxisChartWidget } from '../axisChart/axis-chart.component';
 import { Component } from '../../decorators';
 import { FsData } from '../../services/FsData.service';
 import { DataLabelTransformer } from "../../services/DataLabelTransformer.service";
+import { ChartMapping } from "../../services/ChartMapping.service";
 import '../axisChart/bar-chart.styles.scss';
 
 @Component({
@@ -35,9 +36,10 @@ export class BarChartWidget extends AxisChartWidget {
   constructor(
       protected $scope: ng.IScope,
       protected FsData: FsData,
-      protected DataLabelTransformer: DataLabelTransformer
+      protected DataLabelTransformer: DataLabelTransformer,
+      protected ChartMapping: ChartMapping
   ) {
-    super($scope, FsData, DataLabelTransformer);
+    super($scope, FsData, DataLabelTransformer, ChartMapping);
   }
 
 }
