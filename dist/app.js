@@ -4,6 +4,7 @@ app.config( FsDataProvider => {
   FsDataProvider.customerId = 300033;
   FsDataProvider.baseUrl = 'http://localhost:3000';
   FsDataProvider.dataUrl = '/data';
+  FsDataProvider.dateFormat = 'YYYY-dd-M';
 });
 
 app.controller('FsCtrl', FsCtrl);
