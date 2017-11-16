@@ -107,18 +107,4 @@ protected setResponse(dataset: string, value: FsDataResponse): any {
     this.$scope.$apply();
   }
 
-  private getAxisData(dataset: string, datasources: string[]) {
-    this.data = {
-      labels: ['2017-01-01', '2017-01-02'],
-      data: ['1', '2'],
-      series: ['1'],
-      options: {
-        scales: {
-          xAxes: [{gridLines: { display:false }}],
-          yAxes: [{gridLines: { display:false }}],
-        }
-      },
-    };
-  }
-
 }

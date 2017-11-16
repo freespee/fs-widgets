@@ -40,6 +40,7 @@ app.config(function(FsDataProvider) {
   FsDataProvider.toDate = '2017-08-01';
   FsDataProvider.dataUrl = '/data?type={{type}}&customer_id={{customerId}}&from_date={{fromDate}}&to_date={{toDate}}';
   FsDataProvider.baseUrl = 'http://localhost:3000';
+  FsDataProvider.dateFormat = 'YYYY-MM-DD'; // Optional. Default: 'YYYY-MM-DD'. See [momentjs](https://momentjs.com/docs/#/parsing/string-format) for a complete list of date formatting tokens.
 });
 ````
 
