@@ -15,6 +15,7 @@ import './single-value.styles.scss';
     title: '@',
     type: '@',
     segment: '@',
+    suffix: '@',
     fromDate: '@',
     toDate: '@'
   },
@@ -25,6 +26,7 @@ export class SingleValueWidget {
   private type: string;
   private segments: string[] = ['all_data'];
   private value: any;
+  private suffix: string;
   private fromDate: string;
   private toDate: string;
 
@@ -33,7 +35,12 @@ export class SingleValueWidget {
   }
 
   private setResponse(value: FsDataResponse): any {
-      this.value = value.datasources[0].data;
+    let data = value.datasources[0].data;
+    if(this.suffix) {
+      this.value = `${data} ${this.suffix}`;
+    } else {
+      this.value = data
+    }
   }
 
   async $onChanges() {
