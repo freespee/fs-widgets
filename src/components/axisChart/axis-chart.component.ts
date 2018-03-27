@@ -57,13 +57,7 @@ protected setResponse(dataset: string, value: FsDataResponse): any {
              return a.name < b.name ? -1 : 1;
            }
          })
-         .map(d => {
-           if (d[xAxisColumn.key].length > 15) {
-            return d[xAxisColumn.key].substr(0, 18)+'...';
-           } else {
-             return d[xAxisColumn.key];
-           }
-         })
+         .map(d => d[xAxisColumn.key])
          .filter((entry, index, arr) => labels.indexOf(entry) === -1)
          .map(this.DataLabelTransformer.transform);
        labels.push(...dataLabels);
